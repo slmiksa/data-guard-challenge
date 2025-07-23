@@ -14,7 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      employee_results: {
+        Row: {
+          created_at: string
+          employee_id: string
+          employee_name: string
+          id: string
+          passed: boolean
+          percentage: number
+          score: number
+        }
+        Insert: {
+          created_at?: string
+          employee_id: string
+          employee_name: string
+          id?: string
+          passed: boolean
+          percentage: number
+          score: number
+        }
+        Update: {
+          created_at?: string
+          employee_id?: string
+          employee_name?: string
+          id?: string
+          passed?: boolean
+          percentage?: number
+          score?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
