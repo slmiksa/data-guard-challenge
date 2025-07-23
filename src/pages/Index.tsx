@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -8,38 +7,33 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Shield, CheckCircle, AlertCircle, Users, Clock, Trophy, Target } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-
 const Index = () => {
   const [employeeName, setEmployeeName] = useState("");
   const [employeeId, setEmployeeId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { toast } = useToast();
-
+  const {
+    toast
+  } = useToast();
   const handleStartQuiz = async () => {
     if (!employeeName.trim() || !employeeId.trim()) {
       toast({
         title: "بيانات مطلوبة",
         description: "يرجى إدخال الاسم الثلاثي والرقم الوظيفي",
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
-
     setIsLoading(true);
-
     try {
       // Check if employee has already taken the test
-      const { data: existingResult, error } = await supabase
-        .from('employee_results')
-        .select('*')
-        .eq('employee_id', employeeId)
-        .single();
-
+      const {
+        data: existingResult,
+        error
+      } = await supabase.from('employee_results').select('*').eq('employee_id', employeeId).single();
       if (error && error.code !== 'PGRST116') {
         throw error;
       }
-
       if (existingResult) {
         // Handle time_taken safely - default to 0 if missing
         const timeTaken = existingResult.time_taken || 0;
@@ -48,43 +42,37 @@ const Index = () => {
         toast({
           title: "تم إجراء الاختبار مسبقاً",
           description: `لقد أجريت الاختبار بالفعل وحصلت على ${existingResult.percentage}% في ${timeMinutes}:${timeSeconds.toString().padStart(2, '0')}`,
-          variant: "destructive",
+          variant: "destructive"
         });
         setIsLoading(false);
         return;
       }
 
       // Navigate to quiz with employee data
-      navigate("/quiz", { 
-        state: { 
-          employeeName: employeeName.trim(), 
-          employeeId: employeeId.trim() 
-        } 
+      navigate("/quiz", {
+        state: {
+          employeeName: employeeName.trim(),
+          employeeId: employeeId.trim()
+        }
       });
     } catch (error) {
       console.error('Error checking employee:', error);
       toast({
         title: "خطأ",
         description: "حدث خطأ أثناء التحقق من البيانات",
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setIsLoading(false);
     }
   };
-
-  return (
-    <div className="min-h-screen gold-gradient flex items-center justify-center p-4">
+  return <div className="min-h-screen gold-gradient flex items-center justify-center p-4 bg-yellow-50">
       <div className="max-w-5xl w-full space-y-8">
         {/* Header */}
         <div className="text-center space-y-6">
           <div className="flex justify-center">
             <div className="p-6 bg-white/20 backdrop-blur-sm rounded-full animate-pulse-gold">
-              <img 
-                src="/lovable-uploads/e61a43b1-324b-43cf-9acc-dee57e84a52a.png" 
-                alt="شعار الوصل" 
-                className="h-20 w-20 object-contain"
-              />
+              <img src="/lovable-uploads/e61a43b1-324b-43cf-9acc-dee57e84a52a.png" alt="شعار الوصل" className="h-20 w-20 object-contain" />
             </div>
           </div>
           <h1 className="text-5xl font-bold text-white drop-shadow-lg">
@@ -157,29 +145,13 @@ const Index = () => {
           <CardContent className="space-y-6">
             <div className="space-y-3">
               <Label htmlFor="name" className="text-white font-medium">الاسم الثلاثي</Label>
-              <Input
-                id="name"
-                value={employeeName}
-                onChange={(e) => setEmployeeName(e.target.value)}
-                placeholder="أدخل اسمك الثلاثي"
-                className="bg-white/20 border-white/30 text-white placeholder:text-white/60 h-12 text-lg"
-              />
+              <Input id="name" value={employeeName} onChange={e => setEmployeeName(e.target.value)} placeholder="أدخل اسمك الثلاثي" className="bg-white/20 border-white/30 text-white placeholder:text-white/60 h-12 text-lg" />
             </div>
             <div className="space-y-3">
               <Label htmlFor="employeeId" className="text-white font-medium">الرقم الوظيفي</Label>
-              <Input
-                id="employeeId"
-                value={employeeId}
-                onChange={(e) => setEmployeeId(e.target.value)}
-                placeholder="أدخل رقمك الوظيفي"
-                className="bg-white/20 border-white/30 text-white placeholder:text-white/60 h-12 text-lg"
-              />
+              <Input id="employeeId" value={employeeId} onChange={e => setEmployeeId(e.target.value)} placeholder="أدخل رقمك الوظيفي" className="bg-white/20 border-white/30 text-white placeholder:text-white/60 h-12 text-lg" />
             </div>
-            <Button 
-              onClick={handleStartQuiz}
-              disabled={isLoading}
-              className="w-full bg-white text-primary hover:bg-white/90 interactive-button h-12 text-lg font-medium"
-            >
+            <Button onClick={handleStartQuiz} disabled={isLoading} className="w-full bg-white text-primary hover:bg-white/90 interactive-button h-12 text-lg font-medium">
               {isLoading ? "جاري التحقق..." : "بدء الاختبار"}
             </Button>
           </CardContent>
@@ -187,17 +159,11 @@ const Index = () => {
 
         {/* Admin Link */}
         <div className="text-center">
-          <Button
-            variant="link"
-            onClick={() => navigate("/admin")}
-            className="text-white/80 hover:text-white text-lg"
-          >
+          <Button variant="link" onClick={() => navigate("/admin")} className="text-white/80 hover:text-white text-lg">
             دخول الإدارة
           </Button>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
