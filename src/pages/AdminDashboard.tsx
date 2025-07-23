@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -145,16 +146,18 @@ const AdminDashboard = ({ isAuthenticated }: AdminDashboardProps) => {
   }
 
   return (
-    <div className="min-h-screen gold-gradient p-4">
+    <div className="min-h-screen brown-gradient p-4">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-4 space-x-reverse">
-            <img 
-              src="/lovable-uploads/e61a43b1-324b-43cf-9acc-dee57e84a52a.png" 
-              alt="شعار الوصل" 
-              className="h-12 w-12 object-contain"
-            />
+            <div className="logo-container">
+              <img 
+                src="/lovable-uploads/dfff4da4-873f-4b05-9e34-0a05daeb9091.png" 
+                alt="شعار الوصل" 
+                className="h-12 w-12 object-contain logo-image"
+              />
+            </div>
             <div>
               <h1 className="text-3xl font-bold text-white drop-shadow-lg">
                 لوحة تحكم الإدارة

@@ -126,7 +126,7 @@ const Quiz = () => {
     const timeSeconds = timeTaken % 60;
     
     return (
-      <div className="min-h-screen gold-gradient flex items-center justify-center p-4">
+      <div className="min-h-screen brown-gradient flex items-center justify-center p-4">
         <Card className="max-w-lg w-full bg-white/15 backdrop-blur-sm border-white/20 interactive-card">
           <CardHeader className="text-center">
             <div className="mx-auto mb-4">
@@ -170,16 +170,18 @@ const Quiz = () => {
   const question = questions[currentQuestion];
 
   return (
-    <div className="min-h-screen gold-gradient p-4">
+    <div className="min-h-screen brown-gradient p-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
-            <img 
-              src="/lovable-uploads/e61a43b1-324b-43cf-9acc-dee57e84a52a.png" 
-              alt="شعار الوصل" 
-              className="h-16 w-16 object-contain"
-            />
+            <div className="logo-container">
+              <img 
+                src="/lovable-uploads/dfff4da4-873f-4b05-9e34-0a05daeb9091.png" 
+                alt="شعار الوصل" 
+                className="h-16 w-16 object-contain logo-image"
+              />
+            </div>
           </div>
           <h1 className="text-4xl font-bold text-white mb-2 drop-shadow-lg">
             اختبار الوعي الأمني

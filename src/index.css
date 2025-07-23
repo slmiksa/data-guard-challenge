@@ -12,25 +12,25 @@
     --card-foreground: 30 15% 15%;
     --popover: 0 0% 100%;
     --popover-foreground: 30 15% 15%;
-    --primary: 38 65% 45%;
+    --primary: 30 45% 35%;
     --primary-foreground: 0 0% 98%;
-    --secondary: 38 25% 85%;
+    --secondary: 30 25% 75%;
     --secondary-foreground: 30 15% 15%;
-    --muted: 38 15% 92%;
+    --muted: 30 15% 88%;
     --muted-foreground: 30 10% 45%;
-    --accent: 38 25% 85%;
+    --accent: 30 25% 75%;
     --accent-foreground: 30 15% 15%;
     --destructive: 0 62% 45%;
     --destructive-foreground: 0 0% 98%;
-    --border: 38 20% 85%;
-    --input: 38 20% 92%;
-    --ring: 38 65% 45%;
+    --border: 30 20% 80%;
+    --input: 30 20% 85%;
+    --ring: 30 45% 35%;
     --radius: 0.5rem;
-    --chart-1: 38 65% 45%;
-    --chart-2: 38 45% 35%;
-    --chart-3: 38 55% 55%;
-    --chart-4: 38 75% 65%;
-    --chart-5: 38 85% 75%;
+    --chart-1: 30 45% 35%;
+    --chart-2: 30 35% 25%;
+    --chart-3: 30 55% 45%;
+    --chart-4: 30 65% 55%;
+    --chart-5: 30 75% 65%;
   }
 }
 
@@ -45,14 +45,14 @@
   }
 }
 
-/* Gold gradient background */
-.gold-gradient {
-  background: linear-gradient(135deg, hsl(38, 65%, 45%) 0%, hsl(38, 55%, 35%) 100%);
+/* Brown gradient background */
+.brown-gradient {
+  background: linear-gradient(135deg, hsl(30, 45%, 35%) 0%, hsl(30, 35%, 25%) 100%);
 }
 
-/* Light gold gradient for cards */
-.light-gold-gradient {
-  background: linear-gradient(135deg, hsl(38, 35%, 85%) 0%, hsl(38, 25%, 75%) 100%);
+/* Light brown gradient for cards */
+.light-brown-gradient {
+  background: linear-gradient(135deg, hsl(30, 35%, 75%) 0%, hsl(30, 25%, 65%) 100%);
 }
 
 /* Custom scrollbar */
@@ -61,30 +61,30 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: hsla(38, 65%, 45%, 0.1);
+  background: hsla(30, 45%, 35%, 0.1);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: hsla(38, 65%, 45%, 0.5);
+  background: hsla(30, 45%, 35%, 0.5);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: hsla(38, 65%, 45%, 0.7);
+  background: hsla(30, 45%, 35%, 0.7);
 }
 
 /* Animations */
-@keyframes pulse-gold {
+@keyframes pulse-brown {
   0%, 100% {
-    box-shadow: 0 0 0 0 hsla(38, 65%, 45%, 0.7);
+    box-shadow: 0 0 0 0 hsla(30, 45%, 35%, 0.7);
   }
   70% {
-    box-shadow: 0 0 0 10px hsla(38, 65%, 45%, 0);
+    box-shadow: 0 0 0 10px hsla(30, 45%, 35%, 0);
   }
 }
 
-.animate-pulse-gold {
-  animation: pulse-gold 2s infinite;
+.animate-pulse-brown {
+  animation: pulse-brown 2s infinite;
 }
 
 /* Interactive elements */
@@ -94,7 +94,7 @@
 
 .interactive-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 25px hsla(38, 65%, 45%, 0.2);
+  box-shadow: 0 10px 25px hsla(30, 45%, 35%, 0.2);
 }
 
 .interactive-button {
@@ -121,4 +121,17 @@
 .timer-display {
   font-variant-numeric: tabular-nums;
   font-weight: 600;
+}
+
+/* Logo styling */
+.logo-container {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 50%;
+  padding: 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.logo-image {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }

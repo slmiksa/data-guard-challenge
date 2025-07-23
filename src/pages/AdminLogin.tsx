@@ -42,11 +42,11 @@ const AdminLogin = ({ setIsAuthenticated }: AdminLoginProps) => {
   };
 
   return (
-    <div className="min-h-screen gold-gradient flex items-center justify-center p-4">
+    <div className="min-h-screen brown-gradient flex items-center justify-center p-4">
       <Card className="max-w-md w-full bg-white/15 backdrop-blur-sm border-white/20 interactive-card">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
-            <div className="p-4 bg-white/20 rounded-full">
+            <div className="logo-container">
               <Shield className="h-12 w-12 text-white" />
             </div>
           </div>
