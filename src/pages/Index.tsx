@@ -41,8 +41,10 @@ const Index = () => {
       }
 
       if (existingResult) {
-        const timeMinutes = Math.floor(existingResult.time_taken / 60);
-        const timeSeconds = existingResult.time_taken % 60;
+        // Handle time_taken safely - default to 0 if missing
+        const timeTaken = existingResult.time_taken || 0;
+        const timeMinutes = Math.floor(timeTaken / 60);
+        const timeSeconds = timeTaken % 60;
         toast({
           title: "تم إجراء الاختبار مسبقاً",
           description: `لقد أجريت الاختبار بالفعل وحصلت على ${existingResult.percentage}% في ${timeMinutes}:${timeSeconds.toString().padStart(2, '0')}`,

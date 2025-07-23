@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -58,9 +57,15 @@ const AdminDashboard = ({ isAuthenticated }: AdminDashboardProps) => {
 
       if (error) throw error;
 
-      setResults(data || []);
-      setFilteredResults(data || []);
-      calculateStats(data || []);
+      // Map the data to ensure time_taken exists (default to 0 if missing)
+      const mappedData = (data || []).map(item => ({
+        ...item,
+        time_taken: item.time_taken || 0
+      }));
+
+      setResults(mappedData);
+      setFilteredResults(mappedData);
+      calculateStats(mappedData);
     } catch (error) {
       console.error('Error fetching results:', error);
       toast({
