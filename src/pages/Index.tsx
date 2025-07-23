@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Shield, CheckCircle, AlertCircle, Users } from "lucide-react";
+import { Shield, CheckCircle, AlertCircle, Users, Clock, Trophy, Target } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -41,9 +41,11 @@ const Index = () => {
       }
 
       if (existingResult) {
+        const timeMinutes = Math.floor(existingResult.time_taken / 60);
+        const timeSeconds = existingResult.time_taken % 60;
         toast({
           title: "تم إجراء الاختبار مسبقاً",
-          description: `لقد أجريت الاختبار بالفعل وحصلت على ${existingResult.percentage}%`,
+          description: `لقد أجريت الاختبار بالفعل وحصلت على ${existingResult.percentage}% في ${timeMinutes}:${timeSeconds.toString().padStart(2, '0')}`,
           variant: "destructive",
         });
         setIsLoading(false);
@@ -70,56 +72,72 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen purple-gradient flex items-center justify-center p-4">
-      <div className="max-w-4xl w-full space-y-8">
+    <div className="min-h-screen gold-gradient flex items-center justify-center p-4">
+      <div className="max-w-5xl w-full space-y-8">
         {/* Header */}
-        <div className="text-center space-y-4">
+        <div className="text-center space-y-6">
           <div className="flex justify-center">
-            <div className="p-4 bg-white/20 rounded-full">
-              <Shield className="h-16 w-16 text-white" />
+            <div className="p-6 bg-white/20 backdrop-blur-sm rounded-full animate-pulse-gold">
+              <img 
+                src="/lovable-uploads/e61a43b1-324b-43cf-9acc-dee57e84a52a.png" 
+                alt="شعار الوصل" 
+                className="h-20 w-20 object-contain"
+              />
             </div>
           </div>
-          <h1 className="text-4xl font-bold text-white">
-            اختبار أمن المعلومات وحماية البيانات
+          <h1 className="text-5xl font-bold text-white drop-shadow-lg">
+            اختبار الوعي الأمني
           </h1>
-          <p className="text-xl text-white/90">
-            برنامج توعوي لموظفي شركة تحصيل الديون
+          <p className="text-xl text-white/90 max-w-2xl mx-auto">
+            برنامج توعوي متقدم لموظفي شركة الوصل الوطنية لتحصيل الديون
           </p>
         </div>
 
         {/* Features */}
-        <div className="grid md:grid-cols-3 gap-6">
-          <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+        <div className="grid md:grid-cols-4 gap-6">
+          <Card className="bg-white/15 backdrop-blur-sm border-white/20 interactive-card">
             <CardHeader className="text-center">
-              <CheckCircle className="h-12 w-12 text-green-400 mx-auto mb-2" />
-              <CardTitle className="text-white">تقييم شامل</CardTitle>
+              <Trophy className="h-12 w-12 text-yellow-300 mx-auto mb-2" />
+              <CardTitle className="text-white">15 سؤال</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-white/90 text-center">
-                15 سؤال اختيار من متعدد لقياس مستوى الوعي الأمني
+              <p className="text-white/90 text-center text-sm">
+                تقييم شامل لقياس مستوى الوعي الأمني
               </p>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+          <Card className="bg-white/15 backdrop-blur-sm border-white/20 interactive-card">
             <CardHeader className="text-center">
-              <AlertCircle className="h-12 w-12 text-yellow-400 mx-auto mb-2" />
-              <CardTitle className="text-white">معايير النجاح</CardTitle>
+              <Target className="h-12 w-12 text-green-300 mx-auto mb-2" />
+              <CardTitle className="text-white">70% للنجاح</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-white/90 text-center">
+              <p className="text-white/90 text-center text-sm">
                 يجب الحصول على 70% أو أكثر لاجتياز الاختبار
               </p>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+          <Card className="bg-white/15 backdrop-blur-sm border-white/20 interactive-card">
             <CardHeader className="text-center">
-              <Users className="h-12 w-12 text-blue-400 mx-auto mb-2" />
+              <Clock className="h-12 w-12 text-blue-300 mx-auto mb-2" />
+              <CardTitle className="text-white">مؤقت تفاعلي</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-white/90 text-center text-sm">
+                قياس الوقت المستغرق في الاختبار
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-white/15 backdrop-blur-sm border-white/20 interactive-card">
+            <CardHeader className="text-center">
+              <Users className="h-12 w-12 text-red-300 mx-auto mb-2" />
               <CardTitle className="text-white">محاولة واحدة</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-white/90 text-center">
+              <p className="text-white/90 text-center text-sm">
                 لا يمكن إعادة الاختبار بعد المحاولة الأولى
               </p>
             </CardContent>
@@ -127,38 +145,38 @@ const Index = () => {
         </div>
 
         {/* Start Quiz Form */}
-        <Card className="bg-white/10 backdrop-blur-sm border-white/20 max-w-md mx-auto">
+        <Card className="bg-white/15 backdrop-blur-sm border-white/20 max-w-md mx-auto interactive-card">
           <CardHeader className="text-center">
-            <CardTitle className="text-white">ابدأ الاختبار</CardTitle>
+            <CardTitle className="text-white text-2xl">ابدأ الاختبار</CardTitle>
             <CardDescription className="text-white/80">
               يرجى إدخال بياناتك لبدء الاختبار
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="name" className="text-white">الاسم الثلاثي</Label>
+          <CardContent className="space-y-6">
+            <div className="space-y-3">
+              <Label htmlFor="name" className="text-white font-medium">الاسم الثلاثي</Label>
               <Input
                 id="name"
                 value={employeeName}
                 onChange={(e) => setEmployeeName(e.target.value)}
                 placeholder="أدخل اسمك الثلاثي"
-                className="bg-white/20 border-white/30 text-white placeholder:text-white/60"
+                className="bg-white/20 border-white/30 text-white placeholder:text-white/60 h-12 text-lg"
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="employeeId" className="text-white">الرقم الوظيفي</Label>
+            <div className="space-y-3">
+              <Label htmlFor="employeeId" className="text-white font-medium">الرقم الوظيفي</Label>
               <Input
                 id="employeeId"
                 value={employeeId}
                 onChange={(e) => setEmployeeId(e.target.value)}
                 placeholder="أدخل رقمك الوظيفي"
-                className="bg-white/20 border-white/30 text-white placeholder:text-white/60"
+                className="bg-white/20 border-white/30 text-white placeholder:text-white/60 h-12 text-lg"
               />
             </div>
             <Button 
               onClick={handleStartQuiz}
               disabled={isLoading}
-              className="w-full bg-white text-purple-600 hover:bg-white/90"
+              className="w-full bg-white text-primary hover:bg-white/90 interactive-button h-12 text-lg font-medium"
             >
               {isLoading ? "جاري التحقق..." : "بدء الاختبار"}
             </Button>
@@ -170,7 +188,7 @@ const Index = () => {
           <Button
             variant="link"
             onClick={() => navigate("/admin")}
-            className="text-white/80 hover:text-white"
+            className="text-white/80 hover:text-white text-lg"
           >
             دخول الإدارة
           </Button>

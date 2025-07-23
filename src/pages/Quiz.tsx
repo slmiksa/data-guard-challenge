@@ -4,10 +4,11 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { CheckCircle, XCircle, Clock } from "lucide-react";
+import { CheckCircle, XCircle, ArrowRight, ArrowLeft } from "lucide-react";
 import { questions } from "@/data/questions";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import Timer from "@/components/Timer";
 
 const Quiz = () => {
   const location = useLocation();
@@ -19,6 +20,8 @@ const Quiz = () => {
   const [showResult, setShowResult] = useState(false);
   const [score, setScore] = useState(0);
   const [percentage, setPercentage] = useState(0);
+  const [timeTaken, setTimeTaken] = useState(0);
+  const [isTimerActive, setIsTimerActive] = useState(true);
 
   const employeeData = location.state;
 
@@ -46,6 +49,10 @@ const Quiz = () => {
     }
   };
 
+  const handleTimeUpdate = (seconds: number) => {
+    setTimeTaken(seconds);
+  };
+
   const calculateResults = () => {
     let correctAnswers = 0;
     questions.forEach((question, index) => {
@@ -70,6 +77,7 @@ const Quiz = () => {
     }
 
     setIsSubmitting(true);
+    setIsTimerActive(false);
 
     try {
       const results = calculateResults();
@@ -83,7 +91,8 @@ const Quiz = () => {
           employee_id: employeeData.employeeId,
           score: results.score,
           percentage: results.percentage,
-          passed: passed
+          passed: passed,
+          time_taken: timeTaken
         });
 
       if (error) {
@@ -101,6 +110,7 @@ const Quiz = () => {
         description: "حدث خطأ أثناء حفظ النتائج، يرجى المحاولة مرة أخرى",
         variant: "destructive",
       });
+      setIsTimerActive(true);
     } finally {
       setIsSubmitting(false);
     }
@@ -112,37 +122,41 @@ const Quiz = () => {
 
   if (showResult) {
     const passed = percentage >= 70;
+    const timeMinutes = Math.floor(timeTaken / 60);
+    const timeSeconds = timeTaken % 60;
+    
     return (
-      <div className="min-h-screen purple-gradient flex items-center justify-center p-4">
-        <Card className="max-w-md w-full bg-white/10 backdrop-blur-sm border-white/20">
+      <div className="min-h-screen gold-gradient flex items-center justify-center p-4">
+        <Card className="max-w-lg w-full bg-white/15 backdrop-blur-sm border-white/20 interactive-card">
           <CardHeader className="text-center">
             <div className="mx-auto mb-4">
               {passed ? (
-                <CheckCircle className="h-16 w-16 text-green-400" />
+                <CheckCircle className="h-20 w-20 text-green-300 animate-pulse" />
               ) : (
-                <XCircle className="h-16 w-16 text-red-400" />
+                <XCircle className="h-20 w-20 text-red-300 animate-pulse" />
               )}
             </div>
-            <CardTitle className="text-white text-2xl">
-              {passed ? "نجحت في الاختبار!" : "لم تجتز الاختبار"}
+            <CardTitle className="text-white text-3xl font-bold">
+              {passed ? "🎉 نجحت في الاختبار!" : "😔 لم تجتز الاختبار"}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6 text-center">
-            <div className="space-y-2">
-              <p className="text-white/90">النتيجة: {score} من {questions.length}</p>
-              <p className="text-white/90">النسبة المئوية: {percentage.toFixed(1)}%</p>
+            <div className="bg-white/10 rounded-lg p-4 space-y-3">
+              <p className="text-white text-xl font-medium">النتيجة: {score} من {questions.length}</p>
+              <p className="text-white text-xl font-medium">النسبة المئوية: {percentage.toFixed(1)}%</p>
+              <p className="text-white text-lg">الوقت المستغرق: {timeMinutes}:{timeSeconds.toString().padStart(2, '0')}</p>
             </div>
             <div className="space-y-2">
-              <p className="text-white/80 text-sm">
+              <p className="text-white/90 text-lg">
                 {passed 
-                  ? "تهانينا! لقد أجبت بشكل صحيح على معظم الأسئلة"
-                  : "يرجى مراجعة مواد أمن المعلومات والمحاولة مرة أخرى في المستقبل"
+                  ? "تهانينا! لقد أجبت بشكل صحيح على معظم الأسئلة وأظهرت وعياً جيداً بأمن المعلومات"
+                  : "يرجى مراجعة مواد أمن المعلومات وحماية البيانات والمحاولة مرة أخرى في المستقبل"
                 }
               </p>
             </div>
             <Button
               onClick={() => navigate("/")}
-              className="w-full bg-white text-purple-600 hover:bg-white/90"
+              className="w-full bg-white text-primary hover:bg-white/90 interactive-button h-12 text-lg font-medium"
             >
               العودة للصفحة الرئيسية
             </Button>
@@ -156,51 +170,65 @@ const Quiz = () => {
   const question = questions[currentQuestion];
 
   return (
-    <div className="min-h-screen purple-gradient p-4">
+    <div className="min-h-screen gold-gradient p-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">
-            اختبار أمن المعلومات
+          <div className="flex justify-center mb-4">
+            <img 
+              src="/lovable-uploads/e61a43b1-324b-43cf-9acc-dee57e84a52a.png" 
+              alt="شعار الوصل" 
+              className="h-16 w-16 object-contain"
+            />
+          </div>
+          <h1 className="text-4xl font-bold text-white mb-2 drop-shadow-lg">
+            اختبار الوعي الأمني
           </h1>
-          <p className="text-white/80">
+          <p className="text-white/90 text-lg">
             {employeeData.employeeName} - {employeeData.employeeId}
           </p>
         </div>
 
-        {/* Progress */}
+        {/* Progress and Timer */}
         <div className="mb-8">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-white">
-              السؤال {currentQuestion + 1} من {questions.length}
-            </span>
-            <span className="text-white">
-              {Math.round(progress)}%
-            </span>
+          <div className="flex justify-between items-center mb-4">
+            <div className="flex items-center space-x-4 space-x-reverse">
+              <span className="text-white font-medium text-lg">
+                السؤال {currentQuestion + 1} من {questions.length}
+              </span>
+              <span className="text-white/90 text-lg">
+                {Math.round(progress)}%
+              </span>
+            </div>
+            <Timer 
+              isActive={isTimerActive} 
+              onTimeUpdate={handleTimeUpdate}
+              className="bg-white/20 rounded-lg px-4 py-2"
+            />
           </div>
-          <Progress value={progress} className="h-2" />
+          <Progress value={progress} className="h-3" />
         </div>
 
         {/* Question */}
-        <Card className="bg-white/10 backdrop-blur-sm border-white/20 mb-8">
+        <Card className="bg-white/15 backdrop-blur-sm border-white/20 mb-8 interactive-card">
           <CardHeader>
-            <CardTitle className="text-white text-xl">
+            <CardTitle className="text-white text-2xl font-medium leading-relaxed">
               {question.question}
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3">
+          <CardContent className="space-y-4">
             {question.options.map((option, index) => (
               <Button
                 key={index}
                 variant={selectedAnswers[currentQuestion] === index ? "default" : "outline"}
-                className={`w-full text-right p-4 h-auto ${
+                className={`w-full text-right p-6 h-auto text-lg font-medium transition-all duration-300 ${
                   selectedAnswers[currentQuestion] === index
-                    ? "bg-white text-purple-600"
-                    : "bg-white/10 text-white border-white/30 hover:bg-white/20"
+                    ? "bg-white text-primary shadow-lg transform scale-105"
+                    : "bg-white/10 text-white border-white/30 hover:bg-white/20 hover:scale-102"
                 }`}
                 onClick={() => handleAnswerSelect(index)}
               >
-                {option}
+                <span className="text-right w-full">{option}</span>
               </Button>
             ))}
           </CardContent>
@@ -212,21 +240,23 @@ const Quiz = () => {
             variant="outline"
             onClick={handlePrevious}
             disabled={currentQuestion === 0}
-            className="bg-white/10 text-white border-white/30 hover:bg-white/20"
+            className="bg-white/10 text-white border-white/30 hover:bg-white/20 interactive-button h-12 px-6"
           >
+            <ArrowRight className="h-5 w-5 ml-2" />
             السابق
           </Button>
 
-          <div className="flex items-center space-x-2 text-white/80">
-            <Clock className="h-4 w-4" />
-            <span>لا يوجد حد زمني</span>
+          <div className="text-center">
+            <p className="text-white/80 text-sm">
+              {selectedAnswers.filter(a => a !== undefined).length} / {questions.length} تم الإجابة عليها
+            </p>
           </div>
 
           {currentQuestion === questions.length - 1 ? (
             <Button
               onClick={handleSubmit}
               disabled={isSubmitting || selectedAnswers.length !== questions.length}
-              className="bg-white text-purple-600 hover:bg-white/90"
+              className="bg-white text-primary hover:bg-white/90 interactive-button h-12 px-6"
             >
               {isSubmitting ? "جاري الإرسال..." : "إرسال الاختبار"}
             </Button>
@@ -234,9 +264,10 @@ const Quiz = () => {
             <Button
               onClick={handleNext}
               disabled={selectedAnswers[currentQuestion] === undefined}
-              className="bg-white text-purple-600 hover:bg-white/90"
+              className="bg-white text-primary hover:bg-white/90 interactive-button h-12 px-6"
             >
               التالي
+              <ArrowLeft className="h-5 w-5 mr-2" />
             </Button>
           )}
         </div>
