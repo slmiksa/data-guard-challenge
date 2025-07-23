@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -10,11 +9,9 @@ import { Download, Search, Users, Trophy, Clock, TrendingUp, LogOut } from "luci
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import * as XLSX from 'xlsx';
-
 interface AdminDashboardProps {
   isAuthenticated: boolean;
 }
-
 interface EmployeeResult {
   id: string;
   employee_name: string;
@@ -25,8 +22,9 @@ interface EmployeeResult {
   time_taken: number;
   created_at: string;
 }
-
-const AdminDashboard = ({ isAuthenticated }: AdminDashboardProps) => {
+const AdminDashboard = ({
+  isAuthenticated
+}: AdminDashboardProps) => {
   const [results, setResults] = useState<EmployeeResult[]>([]);
   const [filteredResults, setFilteredResults] = useState<EmployeeResult[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -39,8 +37,9 @@ const AdminDashboard = ({ isAuthenticated }: AdminDashboardProps) => {
     averageTime: 0
   });
   const navigate = useNavigate();
-  const { toast } = useToast();
-
+  const {
+    toast
+  } = useToast();
   useEffect(() => {
     if (!isAuthenticated) {
       navigate("/admin");
@@ -48,14 +47,14 @@ const AdminDashboard = ({ isAuthenticated }: AdminDashboardProps) => {
     }
     fetchResults();
   }, [isAuthenticated, navigate]);
-
   const fetchResults = async () => {
     try {
-      const { data, error } = await supabase
-        .from('employee_results')
-        .select('*')
-        .order('created_at', { ascending: false });
-
+      const {
+        data,
+        error
+      } = await supabase.from('employee_results').select('*').order('created_at', {
+        ascending: false
+      });
       if (error) throw error;
 
       // Map the data to ensure time_taken exists (default to 0 if missing)
@@ -63,7 +62,6 @@ const AdminDashboard = ({ isAuthenticated }: AdminDashboardProps) => {
         ...item,
         time_taken: (item as any).time_taken || 0
       }));
-
       setResults(mappedData);
       setFilteredResults(mappedData);
       calculateStats(mappedData);
@@ -72,20 +70,18 @@ const AdminDashboard = ({ isAuthenticated }: AdminDashboardProps) => {
       toast({
         title: "خطأ في تحميل البيانات",
         description: "حدث خطأ أثناء تحميل نتائج الاختبارات",
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setIsLoading(false);
     }
   };
-
   const calculateStats = (data: EmployeeResult[]) => {
     const total = data.length;
     const passed = data.filter(r => r.passed).length;
     const failed = total - passed;
     const averageScore = total > 0 ? data.reduce((sum, r) => sum + r.percentage, 0) / total : 0;
     const averageTime = total > 0 ? data.reduce((sum, r) => sum + r.time_taken, 0) / total : 0;
-
     setStats({
       total,
       passed,
@@ -94,20 +90,15 @@ const AdminDashboard = ({ isAuthenticated }: AdminDashboardProps) => {
       averageTime
     });
   };
-
   const handleSearch = (value: string) => {
     setSearchTerm(value);
     if (value.trim() === "") {
       setFilteredResults(results);
     } else {
-      const filtered = results.filter(result =>
-        result.employee_name.toLowerCase().includes(value.toLowerCase()) ||
-        result.employee_id.toLowerCase().includes(value.toLowerCase())
-      );
+      const filtered = results.filter(result => result.employee_name.toLowerCase().includes(value.toLowerCase()) || result.employee_id.toLowerCase().includes(value.toLowerCase()));
       setFilteredResults(filtered);
     }
   };
-
   const exportToExcel = () => {
     const exportData = filteredResults.map(result => ({
       'اسم الموظف': result.employee_name,
@@ -119,45 +110,32 @@ const AdminDashboard = ({ isAuthenticated }: AdminDashboardProps) => {
       'تاريخ الاختبار': new Date(result.created_at).toLocaleDateString('ar-SA'),
       'وقت الاختبار': new Date(result.created_at).toLocaleTimeString('ar-SA')
     }));
-
     const worksheet = XLSX.utils.json_to_sheet(exportData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'نتائج الاختبار');
     XLSX.writeFile(workbook, `نتائج_اختبار_الوعي_الأمني_${new Date().toISOString().split('T')[0]}.xlsx`);
-    
     toast({
       title: "تم التصدير بنجاح",
-      description: "تم تصدير النتائج إلى ملف Excel",
+      description: "تم تصدير النتائج إلى ملف Excel"
     });
   };
-
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
-
   const handleLogout = () => {
     navigate("/admin");
   };
-
   if (!isAuthenticated) {
     return null;
   }
-
-  return (
-    <div className="min-h-screen brown-gradient p-4">
+  return <div className="min-h-screen brown-gradient p-4">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-4 space-x-reverse">
-            <div className="logo-container">
-              <img 
-                src="/lovable-uploads/dfff4da4-873f-4b05-9e34-0a05daeb9091.png" 
-                alt="شعار الوصل" 
-                className="h-12 w-12 object-contain logo-image"
-              />
-            </div>
+            
             <div>
               <h1 className="text-3xl font-bold text-white drop-shadow-lg">
                 لوحة تحكم الإدارة
@@ -167,11 +145,7 @@ const AdminDashboard = ({ isAuthenticated }: AdminDashboardProps) => {
               </p>
             </div>
           </div>
-          <Button
-            onClick={handleLogout}
-            variant="outline"
-            className="bg-white/10 text-white border-white/30 hover:bg-white/20"
-          >
+          <Button onClick={handleLogout} variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20">
             <LogOut className="h-4 w-4 ml-2" />
             تسجيل الخروج
           </Button>
@@ -243,17 +217,9 @@ const AdminDashboard = ({ isAuthenticated }: AdminDashboardProps) => {
               <div className="flex gap-2">
                 <div className="relative">
                   <Search className="absolute right-3 top-3 h-4 w-4 text-white/60" />
-                  <Input
-                    placeholder="بحث بالاسم أو الرقم الوظيفي"
-                    value={searchTerm}
-                    onChange={(e) => handleSearch(e.target.value)}
-                    className="bg-white/20 border-white/30 text-white placeholder:text-white/60 pr-10 w-64"
-                  />
+                  <Input placeholder="بحث بالاسم أو الرقم الوظيفي" value={searchTerm} onChange={e => handleSearch(e.target.value)} className="bg-white/20 border-white/30 text-white placeholder:text-white/60 pr-10 w-64" />
                 </div>
-                <Button
-                  onClick={exportToExcel}
-                  className="bg-white text-primary hover:bg-white/90 interactive-button"
-                >
+                <Button onClick={exportToExcel} className="bg-white text-primary hover:bg-white/90 interactive-button">
                   <Download className="h-4 w-4 ml-2" />
                   تصدير Excel
                 </Button>
@@ -275,21 +241,15 @@ const AdminDashboard = ({ isAuthenticated }: AdminDashboardProps) => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {isLoading ? (
-                    <TableRow>
+                  {isLoading ? <TableRow>
                       <TableCell colSpan={7} className="text-center text-white/80 py-8">
                         جاري التحميل...
                       </TableCell>
-                    </TableRow>
-                  ) : filteredResults.length === 0 ? (
-                    <TableRow>
+                    </TableRow> : filteredResults.length === 0 ? <TableRow>
                       <TableCell colSpan={7} className="text-center text-white/80 py-8">
                         لا توجد نتائج
                       </TableCell>
-                    </TableRow>
-                  ) : (
-                    filteredResults.map((result) => (
-                      <TableRow key={result.id} className="border-white/10 hover:bg-white/5">
+                    </TableRow> : filteredResults.map(result => <TableRow key={result.id} className="border-white/10 hover:bg-white/5">
                         <TableCell className="text-white font-medium">{result.employee_name}</TableCell>
                         <TableCell className="text-white">{result.employee_id}</TableCell>
                         <TableCell className="text-white">{result.score} / 15</TableCell>
@@ -306,17 +266,13 @@ const AdminDashboard = ({ isAuthenticated }: AdminDashboardProps) => {
                             <div className="text-white/70">{new Date(result.created_at).toLocaleTimeString('ar-SA')}</div>
                           </div>
                         </TableCell>
-                      </TableRow>
-                    ))
-                  )}
+                      </TableRow>)}
                 </TableBody>
               </Table>
             </div>
           </CardContent>
         </Card>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default AdminDashboard;
