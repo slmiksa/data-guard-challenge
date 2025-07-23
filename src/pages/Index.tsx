@@ -81,7 +81,7 @@ const Index = () => {
           <div className="flex justify-center">
             <div className="logo-container animate-pulse-brown">
               <img 
-                src="/lovable-uploads/dfff4da4-873f-4b05-9e34-0a05daeb9091.png" 
+                src="/lovable-uploads/2ffb2884-50d2-4c54-855b-7a9eb87200b9.png" 
                 alt="شعار الوصل" 
                 className="h-20 w-20 object-contain logo-image"
               />
@@ -97,49 +97,49 @@ const Index = () => {
 
         {/* Features */}
         <div className="grid md:grid-cols-4 gap-6">
-          <Card className="bg-white/15 backdrop-blur-sm border-white/20 interactive-card">
+          <Card className="bg-white/90 backdrop-blur-sm border-[#8B6914]/30 interactive-card">
             <CardHeader className="text-center">
-              <Trophy className="h-12 w-12 text-yellow-300 mx-auto mb-2" />
-              <CardTitle className="text-white">15 سؤال</CardTitle>
+              <Trophy className="h-12 w-12 text-[#8B6914] mx-auto mb-2" />
+              <CardTitle className="text-[#8B6914] text-lg">15 سؤال</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-white/90 text-center text-sm">
+              <p className="text-[#8B6914]/80 text-center text-sm">
                 تقييم شامل لقياس مستوى الوعي الأمني
               </p>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/15 backdrop-blur-sm border-white/20 interactive-card">
+          <Card className="bg-white/90 backdrop-blur-sm border-[#8B6914]/30 interactive-card">
             <CardHeader className="text-center">
-              <Target className="h-12 w-12 text-green-300 mx-auto mb-2" />
-              <CardTitle className="text-white">70% للنجاح</CardTitle>
+              <Clock className="h-12 w-12 text-[#8B6914] mx-auto mb-2" />
+              <CardTitle className="text-[#8B6914] text-lg">مؤقت تفاعلي</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-white/90 text-center text-sm">
-                يجب الحصول على 70% أو أكثر لاجتياز الاختبار
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-white/15 backdrop-blur-sm border-white/20 interactive-card">
-            <CardHeader className="text-center">
-              <Clock className="h-12 w-12 text-blue-300 mx-auto mb-2" />
-              <CardTitle className="text-white">مؤقت تفاعلي</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-white/90 text-center text-sm">
+              <p className="text-[#8B6914]/80 text-center text-sm">
                 قياس الوقت المستغرق في الاختبار
               </p>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/15 backdrop-blur-sm border-white/20 interactive-card">
+          <Card className="bg-white/90 backdrop-blur-sm border-[#8B6914]/30 interactive-card">
             <CardHeader className="text-center">
-              <Users className="h-12 w-12 text-red-300 mx-auto mb-2" />
-              <CardTitle className="text-white">محاولة واحدة</CardTitle>
+              <Target className="h-12 w-12 text-[#8B6914] mx-auto mb-2" />
+              <CardTitle className="text-[#8B6914] text-lg">70% للنجاح</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-white/90 text-center text-sm">
+              <p className="text-[#8B6914]/80 text-center text-sm">
+                يجب الحصول على 70% أو أكثر لاجتياز الاختبار
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-white/90 backdrop-blur-sm border-[#8B6914]/30 interactive-card">
+            <CardHeader className="text-center">
+              <Users className="h-12 w-12 text-[#8B6914] mx-auto mb-2" />
+              <CardTitle className="text-[#8B6914] text-lg">محاولة واحدة</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-[#8B6914]/80 text-center text-sm">
                 لا يمكن إعادة الاختبار بعد المحاولة الأولى
               </p>
             </CardContent>
@@ -147,38 +147,38 @@ const Index = () => {
         </div>
 
         {/* Start Quiz Form */}
-        <Card className="bg-white/15 backdrop-blur-sm border-white/20 max-w-md mx-auto interactive-card">
+        <Card className="bg-white/90 backdrop-blur-sm border-[#8B6914]/30 max-w-md mx-auto interactive-card">
           <CardHeader className="text-center">
-            <CardTitle className="text-white text-2xl">ابدأ الاختبار</CardTitle>
-            <CardDescription className="text-white/80">
+            <CardTitle className="text-[#8B6914] text-2xl">ابدأ الاختبار</CardTitle>
+            <CardDescription className="text-[#8B6914]/80">
               يرجى إدخال بياناتك لبدء الاختبار
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-3">
-              <Label htmlFor="name" className="text-white font-medium">الاسم الثلاثي</Label>
+              <Label htmlFor="name" className="text-[#8B6914] font-medium">الاسم الثلاثي</Label>
               <Input
                 id="name"
                 value={employeeName}
                 onChange={(e) => setEmployeeName(e.target.value)}
                 placeholder="أدخل اسمك الثلاثي"
-                className="bg-white/20 border-white/30 text-white placeholder:text-white/60 h-12 text-lg"
+                className="border-[#8B6914]/30 focus:border-[#8B6914] focus:ring-[#8B6914] h-12 text-lg"
               />
             </div>
             <div className="space-y-3">
-              <Label htmlFor="employeeId" className="text-white font-medium">الرقم الوظيفي</Label>
+              <Label htmlFor="employeeId" className="text-[#8B6914] font-medium">الرقم الوظيفي</Label>
               <Input
                 id="employeeId"
                 value={employeeId}
                 onChange={(e) => setEmployeeId(e.target.value)}
                 placeholder="أدخل رقمك الوظيفي"
-                className="bg-white/20 border-white/30 text-white placeholder:text-white/60 h-12 text-lg"
+                className="border-[#8B6914]/30 focus:border-[#8B6914] focus:ring-[#8B6914] h-12 text-lg"
               />
             </div>
             <Button
               onClick={handleStartQuiz}
               disabled={isLoading}
-              className="w-full bg-white text-primary hover:bg-white/90 interactive-button h-12 text-lg font-medium"
+              className="w-full bg-[#8B6914] text-white hover:bg-[#8B6914]/90 interactive-button h-12 text-lg font-medium"
             >
               {isLoading ? "جاري التحقق..." : "بدء الاختبار"}
             </Button>
