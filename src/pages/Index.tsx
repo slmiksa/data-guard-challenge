@@ -41,7 +41,7 @@ const Index = () => {
 
       if (existingResult) {
         // Handle time_taken safely - default to 0 if missing
-        const timeTaken = existingResult.time_taken || 0;
+        const timeTaken = (existingResult as any).time_taken || 0;
         const timeMinutes = Math.floor(timeTaken / 60);
         const timeSeconds = timeTaken % 60;
         

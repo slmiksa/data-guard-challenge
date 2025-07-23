@@ -61,7 +61,7 @@ const AdminDashboard = ({ isAuthenticated }: AdminDashboardProps) => {
       // Map the data to ensure time_taken exists (default to 0 if missing)
       const mappedData = (data || []).map(item => ({
         ...item,
-        time_taken: item.time_taken || 0
+        time_taken: (item as any).time_taken || 0
       }));
 
       setResults(mappedData);
