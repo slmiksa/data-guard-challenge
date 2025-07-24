@@ -157,9 +157,7 @@ const Index = () => {
 
         {/* Admin Link */}
         <div className="text-center">
-          <Button variant="link" onClick={() => navigate("/admin")} className="text-white/80 hover:text-white text-lg">
-            دخول الإدارة
-          </Button>
+          
         </div>
       </div>
     </div>;
