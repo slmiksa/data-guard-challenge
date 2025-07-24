@@ -83,8 +83,17 @@ const Quiz = () => {
       const results = calculateResults();
       const passed = results.percentage >= 70;
 
+      console.log('Saving results:', {
+        employee_name: employeeData.employeeName,
+        employee_id: employeeData.employeeId,
+        score: results.score,
+        percentage: results.percentage,
+        passed: passed,
+        time_taken: timeTaken
+      });
+
       // Save results to database
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('employee_results')
         .insert({
           employee_name: employeeData.employeeName,
@@ -93,11 +102,15 @@ const Quiz = () => {
           percentage: results.percentage,
           passed: passed,
           time_taken: timeTaken
-        });
+        })
+        .select();
 
       if (error) {
+        console.error('Supabase error:', error);
         throw error;
       }
+
+      console.log('Results saved successfully:', data);
 
       setScore(results.score);
       setPercentage(results.percentage);

@@ -23,6 +23,7 @@ export type Database = {
           passed: boolean
           percentage: number
           score: number
+          time_taken: number | null
         }
         Insert: {
           created_at?: string
@@ -32,6 +33,7 @@ export type Database = {
           passed: boolean
           percentage: number
           score: number
+          time_taken?: number | null
         }
         Update: {
           created_at?: string
@@ -41,6 +43,7 @@ export type Database = {
           passed?: boolean
           percentage?: number
           score?: number
+          time_taken?: number | null
         }
         Relationships: []
       }
