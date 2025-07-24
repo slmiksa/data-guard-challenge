@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Shield, CheckCircle, AlertCircle, Users, Clock, Trophy, Target } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+
 const Index = () => {
   const [employeeName, setEmployeeName] = useState("");
   const [employeeId, setEmployeeId] = useState("");
@@ -66,7 +67,8 @@ const Index = () => {
       setIsLoading(false);
     }
   };
-  return <div className="min-h-screen brown-gradient flex items-center justify-center p-4">
+  return (
+    <div className="min-h-screen brown-gradient flex items-center justify-center p-4">
       <div className="max-w-5xl w-full space-y-8">
         {/* Header */}
         <div className="text-center space-y-6">
@@ -77,7 +79,7 @@ const Index = () => {
             اختبار الوعي الأمني
           </h1>
           <p className="text-xl text-white/90 max-w-2xl mx-auto">
-            برنامج توعوي متقدم لموظفي شركة الوصل الوطنية لتحصيل الديون
+            برنامج توعوي متقدم لموظفي شركة الوصل الوطنية لتحصيل ديون جهات التمويل
           </p>
         </div>
 
@@ -160,6 +162,8 @@ const Index = () => {
           
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default Index;
