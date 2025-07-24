@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Shield, CheckCircle, AlertCircle, Users, Clock, Trophy, Target } from "lucide-react";
+import { Shield, CheckCircle, AlertCircle, Users, Clock, Trophy, Target, Info } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -13,9 +13,8 @@ const Index = () => {
   const [employeeId, setEmployeeId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
+
   const handleStartQuiz = async () => {
     if (!employeeName.trim() || !employeeId.trim()) {
       toast({
@@ -67,6 +66,7 @@ const Index = () => {
       setIsLoading(false);
     }
   };
+
   return (
     <div className="min-h-screen brown-gradient flex items-center justify-center p-4">
       <div className="max-w-5xl w-full space-y-8">
@@ -81,6 +81,33 @@ const Index = () => {
           <p className="text-xl text-white/90 max-w-2xl mx-auto">
             برنامج توعوي متقدم لموظفي شركة الوصل الوطنية لتحصيل ديون جهات التمويل
           </p>
+          
+          {/* Test Phases Note */}
+          <Card className="bg-blue-50/90 backdrop-blur-sm border-blue-200/50 max-w-2xl mx-auto">
+            <CardHeader className="pb-3">
+              <div className="flex items-center gap-2 justify-center">
+                <Info className="h-5 w-5 text-blue-600" />
+                <CardTitle className="text-blue-800 text-lg">ملاحظة هامة</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <p className="text-blue-700 text-center font-medium">
+                الاختبار مقسم لثلاث مراحل (مبتدئ - متوسط - متقدم) مقسمة على ثلاث أسابيع
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Current Test Level */}
+          <Card className="bg-green-50/90 backdrop-blur-sm border-green-200/50 max-w-md mx-auto">
+            <CardContent className="py-4">
+              <div className="flex items-center gap-2 justify-center">
+                <Target className="h-5 w-5 text-green-600" />
+                <p className="text-green-800 font-semibold text-lg">
+                  مستوى الاختبار الحالي: مبتدئ
+                </p>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Features */}
@@ -145,13 +172,29 @@ const Index = () => {
           <CardContent className="space-y-6">
             <div className="space-y-3">
               <Label htmlFor="name" className="text-[#8B6914] font-medium">الاسم الثلاثي</Label>
-              <Input id="name" value={employeeName} onChange={e => setEmployeeName(e.target.value)} placeholder="أدخل اسمك الثلاثي" className="border-[#8B6914]/30 focus:border-[#8B6914] focus:ring-[#8B6914] h-12 text-lg" />
+              <Input 
+                id="name" 
+                value={employeeName} 
+                onChange={e => setEmployeeName(e.target.value)} 
+                placeholder="أدخل اسمك الثلاثي" 
+                className="border-[#8B6914]/30 focus:border-[#8B6914] focus:ring-[#8B6914] h-12 text-lg" 
+              />
             </div>
             <div className="space-y-3">
               <Label htmlFor="employeeId" className="text-[#8B6914] font-medium">الرقم الوظيفي</Label>
-              <Input id="employeeId" value={employeeId} onChange={e => setEmployeeId(e.target.value)} placeholder="أدخل رقمك الوظيفي" className="border-[#8B6914]/30 focus:border-[#8B6914] focus:ring-[#8B6914] h-12 text-lg" />
+              <Input 
+                id="employeeId" 
+                value={employeeId} 
+                onChange={e => setEmployeeId(e.target.value)} 
+                placeholder="أدخل رقمك الوظيفي" 
+                className="border-[#8B6914]/30 focus:border-[#8B6914] focus:ring-[#8B6914] h-12 text-lg" 
+              />
             </div>
-            <Button onClick={handleStartQuiz} disabled={isLoading} className="w-full bg-[#8B6914] text-white hover:bg-[#8B6914]/90 interactive-button h-12 text-lg font-medium">
+            <Button 
+              onClick={handleStartQuiz} 
+              disabled={isLoading} 
+              className="w-full bg-[#8B6914] text-white hover:bg-[#8B6914]/90 interactive-button h-12 text-lg font-medium"
+            >
               {isLoading ? "جاري التحقق..." : "بدء الاختبار"}
             </Button>
           </CardContent>
