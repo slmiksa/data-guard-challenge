@@ -38,9 +38,7 @@ const AdminDashboard = ({ isAuthenticated }: AdminDashboardProps) => {
     averageTime: 0
   });
   const navigate = useNavigate();
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -82,21 +80,22 @@ const AdminDashboard = ({ isAuthenticated }: AdminDashboardProps) => {
 
   const deleteResult = async (id: string, employeeName: string) => {
     try {
+      console.log('Attempting to delete result with ID:', id);
+      
       const { error } = await supabase
         .from('employee_results')
         .delete()
         .eq('id', id);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase delete error:', error);
+        throw error;
+      }
 
-      // Remove from local state
-      const updatedResults = results.filter(result => result.id !== id);
-      setResults(updatedResults);
-      setFilteredResults(updatedResults.filter(result => 
-        result.employee_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        result.employee_id.toLowerCase().includes(searchTerm.toLowerCase())
-      ));
-      calculateStats(updatedResults);
+      console.log('Successfully deleted from database');
+
+      // Refresh the data from the database
+      await fetchResults();
 
       toast({
         title: "تم حذف النتيجة بنجاح",
@@ -132,7 +131,10 @@ const AdminDashboard = ({ isAuthenticated }: AdminDashboardProps) => {
     if (value.trim() === "") {
       setFilteredResults(results);
     } else {
-      const filtered = results.filter(result => result.employee_name.toLowerCase().includes(value.toLowerCase()) || result.employee_id.toLowerCase().includes(value.toLowerCase()));
+      const filtered = results.filter(result => 
+        result.employee_name.toLowerCase().includes(value.toLowerCase()) || 
+        result.employee_id.toLowerCase().includes(value.toLowerCase())
+      );
       setFilteredResults(filtered);
     }
   };
