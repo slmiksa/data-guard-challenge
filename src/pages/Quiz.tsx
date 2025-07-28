@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -9,11 +8,12 @@ import { questions } from "@/data/questions";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import Timer from "@/components/Timer";
-
 const Quiz = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<number[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -27,37 +27,30 @@ const Quiz = () => {
     userAnswer: string;
     correctAnswer: string;
   }>>([]);
-
   const employeeData = location.state;
-
   useEffect(() => {
     if (!employeeData) {
       navigate("/");
     }
   }, [employeeData, navigate]);
-
   const handleAnswerSelect = (answerIndex: number) => {
     const newAnswers = [...selectedAnswers];
     newAnswers[currentQuestion] = answerIndex;
     setSelectedAnswers(newAnswers);
   };
-
   const handleNext = () => {
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
     }
   };
-
   const handlePrevious = () => {
     if (currentQuestion > 0) {
       setCurrentQuestion(currentQuestion - 1);
     }
   };
-
   const handleTimeUpdate = (seconds: number) => {
     setTimeTaken(seconds);
   };
-
   const calculateResults = () => {
     let correctAnswers = 0;
     const wrongAnswers: Array<{
@@ -65,7 +58,6 @@ const Quiz = () => {
       userAnswer: string;
       correctAnswer: string;
     }> = [];
-
     questions.forEach((question, index) => {
       if (selectedAnswers[index] === question.correctAnswer) {
         correctAnswers++;
@@ -77,14 +69,12 @@ const Quiz = () => {
         });
       }
     });
-
     return {
       score: correctAnswers,
-      percentage: (correctAnswers / questions.length) * 100,
+      percentage: correctAnswers / questions.length * 100,
       incorrectAnswers: wrongAnswers
     };
   };
-
   const handleSubmit = async () => {
     // تأكد من أن جميع الأسئلة تم الإجابة عليها
     if (selectedAnswers.length !== questions.length || selectedAnswers.includes(undefined)) {
@@ -95,14 +85,11 @@ const Quiz = () => {
       });
       return;
     }
-
     setIsSubmitting(true);
     setIsTimerActive(false);
-
     try {
       const results = calculateResults();
       const passed = results.percentage >= 70;
-
       console.log('Saving results:', {
         employee_name: employeeData.employeeName,
         employee_id: employeeData.employeeId,
@@ -113,55 +100,53 @@ const Quiz = () => {
       });
 
       // Check if employee already has a result
-      const { data: existingResult, error: checkError } = await supabase
-        .from('employee_results')
-        .select('*')
-        .eq('employee_id', employeeData.employeeId)
-        .maybeSingle();
-
+      const {
+        data: existingResult,
+        error: checkError
+      } = await supabase.from('employee_results').select('*').eq('employee_id', employeeData.employeeId).maybeSingle();
       if (checkError) {
         console.error('Error checking existing results:', checkError);
         throw checkError;
       }
-
       let saveResult;
       if (existingResult) {
         // Update existing result
-        const { data, error } = await supabase
-          .from('employee_results')
-          .update({
-            employee_name: employeeData.employeeName,
-            score: results.score,
-            percentage: results.percentage,
-            passed: passed,
-            time_taken: timeTaken
-          })
-          .eq('employee_id', employeeData.employeeId)
-          .select();
-
-        saveResult = { data, error };
+        const {
+          data,
+          error
+        } = await supabase.from('employee_results').update({
+          employee_name: employeeData.employeeName,
+          score: results.score,
+          percentage: results.percentage,
+          passed: passed,
+          time_taken: timeTaken
+        }).eq('employee_id', employeeData.employeeId).select();
+        saveResult = {
+          data,
+          error
+        };
       } else {
         // Insert new result
-        const { data, error } = await supabase
-          .from('employee_results')
-          .insert({
-            employee_name: employeeData.employeeName,
-            employee_id: employeeData.employeeId,
-            score: results.score,
-            percentage: results.percentage,
-            passed: passed,
-            time_taken: timeTaken
-          })
-          .select();
-
-        saveResult = { data, error };
+        const {
+          data,
+          error
+        } = await supabase.from('employee_results').insert({
+          employee_name: employeeData.employeeName,
+          employee_id: employeeData.employeeId,
+          score: results.score,
+          percentage: results.percentage,
+          passed: passed,
+          time_taken: timeTaken
+        }).select();
+        saveResult = {
+          data,
+          error
+        };
       }
-
       if (saveResult.error) {
         console.error('Supabase error:', saveResult.error);
         throw saveResult.error;
       }
-
       console.log('Results saved successfully:', saveResult.data);
       setScore(results.score);
       setPercentage(results.percentage);
@@ -179,27 +164,19 @@ const Quiz = () => {
       setIsSubmitting(false);
     }
   };
-
   if (!employeeData) {
     return null;
   }
-
   if (showResult) {
     const passed = percentage >= 70;
     const timeMinutes = Math.floor(timeTaken / 60);
     const timeSeconds = timeTaken % 60;
-
-    return (
-      <div className="min-h-screen brown-gradient flex items-center justify-center p-4">
+    return <div className="min-h-screen brown-gradient flex items-center justify-center p-4">
         <div className="max-w-4xl w-full space-y-6">
           <Card className="bg-white/15 backdrop-blur-sm border-white/20 interactive-card">
             <CardHeader className="text-center">
               <div className="mx-auto mb-4">
-                {passed ? (
-                  <CheckCircle className="h-20 w-20 text-green-300 animate-pulse" />
-                ) : (
-                  <XCircle className="h-20 w-20 text-red-300 animate-pulse" />
-                )}
+                {passed ? <CheckCircle className="h-20 w-20 text-green-300 animate-pulse" /> : <XCircle className="h-20 w-20 text-red-300 animate-pulse" />}
               </div>
               <CardTitle className="text-white text-3xl font-bold">
                 {passed ? "🎉 نجحت في الاختبار!" : "😔 لم تجتز الاختبار"}
@@ -213,25 +190,21 @@ const Quiz = () => {
               </div>
               <div className="space-y-2">
                 <p className="text-white/90 text-lg">
-                  {passed
-                    ? "تهانينا! لقد أجبت بشكل صحيح على معظم الأسئلة وأظهرت وعياً جيداً بأمن المعلومات"
-                    : "يرجى مراجعة مواد أمن المعلومات وحماية البيانات والمحاولة مرة أخرى في المستقبل"}
+                  {passed ? "تهانينا! لقد أجبت بشكل صحيح على معظم الأسئلة وأظهرت وعياً جيداً بأمن المعلومات" : "يرجى مراجعة مواد أمن المعلومات وحماية البيانات والمحاولة مرة أخرى في المستقبل"}
                 </p>
               </div>
             </CardContent>
           </Card>
 
           {/* Show incorrect answers if any */}
-          {incorrectAnswers.length > 0 && (
-            <Card className="bg-white/15 backdrop-blur-sm border-white/20 interactive-card">
+          {incorrectAnswers.length > 0 && <Card className="bg-white/15 backdrop-blur-sm border-white/20 interactive-card">
               <CardHeader>
                 <CardTitle className="text-white text-2xl font-bold text-center">
                   الإجابات الخاطئة والحلول الصحيحة
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {incorrectAnswers.map((item, index) => (
-                  <div key={index} className="bg-white/10 rounded-lg p-4 space-y-3">
+                {incorrectAnswers.map((item, index) => <div key={index} className="bg-white/10 rounded-lg p-4 space-y-3">
                     <h4 className="text-white font-medium text-lg">
                       السؤال {index + 1}: {item.question}
                     </h4>
@@ -239,35 +212,25 @@ const Quiz = () => {
                       <p className="text-right text-red-500">
                         <span className="font-medium">إجابتك:</span> {item.userAnswer}
                       </p>
-                      <p className="text-green-300 text-right">
+                      <p className="text-right text-green-600">
                         <span className="font-medium">الإجابة الصحيحة:</span> {item.correctAnswer}
                       </p>
                     </div>
-                  </div>
-                ))}
+                  </div>)}
               </CardContent>
-            </Card>
-          )}
+            </Card>}
         </div>
-      </div>
-    );
+      </div>;
   }
-
-  const progress = ((currentQuestion + 1) / questions.length) * 100;
+  const progress = (currentQuestion + 1) / questions.length * 100;
   const question = questions[currentQuestion];
-
-  return (
-    <div className="min-h-screen brown-gradient p-4">
+  return <div className="min-h-screen brown-gradient p-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
             <div className="logo-container">
-              <img
-                src="/lovable-uploads/dfff4da4-873f-4b05-9e34-0a05daeb9091.png"
-                alt="شعار الوصل"
-                className="h-16 w-16 object-contain logo-image"
-              />
+              <img src="/lovable-uploads/dfff4da4-873f-4b05-9e34-0a05daeb9091.png" alt="شعار الوصل" className="h-16 w-16 object-contain logo-image" />
             </div>
           </div>
           <h1 className="text-4xl font-bold text-white mb-2 drop-shadow-lg">
@@ -289,11 +252,7 @@ const Quiz = () => {
                 {Math.round(progress)}%
               </span>
             </div>
-            <Timer
-              isActive={isTimerActive}
-              onTimeUpdate={handleTimeUpdate}
-              className="bg-white/20 rounded-lg px-4 py-2"
-            />
+            <Timer isActive={isTimerActive} onTimeUpdate={handleTimeUpdate} className="bg-white/20 rounded-lg px-4 py-2" />
           </div>
           <Progress value={progress} className="h-3" />
         </div>
@@ -306,31 +265,15 @@ const Quiz = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {question.options.map((option, index) => (
-              <Button
-                key={index}
-                variant={selectedAnswers[currentQuestion] === index ? "default" : "outline"}
-                className={`w-full text-right p-6 h-auto text-lg font-medium transition-all duration-300 ${
-                  selectedAnswers[currentQuestion] === index
-                    ? "bg-white text-primary shadow-lg transform scale-105"
-                    : "bg-white/10 text-white border-white/30 hover:bg-white/20 hover:scale-102"
-                }`}
-                onClick={() => handleAnswerSelect(index)}
-              >
+            {question.options.map((option, index) => <Button key={index} variant={selectedAnswers[currentQuestion] === index ? "default" : "outline"} className={`w-full text-right p-6 h-auto text-lg font-medium transition-all duration-300 ${selectedAnswers[currentQuestion] === index ? "bg-white text-primary shadow-lg transform scale-105" : "bg-white/10 text-white border-white/30 hover:bg-white/20 hover:scale-102"}`} onClick={() => handleAnswerSelect(index)}>
                 <span className="text-right w-full">{option}</span>
-              </Button>
-            ))}
+              </Button>)}
           </CardContent>
         </Card>
 
         {/* Navigation */}
         <div className="flex justify-between items-center">
-          <Button
-            variant="outline"
-            onClick={handlePrevious}
-            disabled={currentQuestion === 0}
-            className="bg-white/10 text-white border-white/30 hover:bg-white/20 interactive-button h-12 px-6"
-          >
+          <Button variant="outline" onClick={handlePrevious} disabled={currentQuestion === 0} className="bg-white/10 text-white border-white/30 hover:bg-white/20 interactive-button h-12 px-6">
             <ArrowRight className="h-5 w-5 ml-2" />
             السابق
           </Button>
@@ -341,28 +284,14 @@ const Quiz = () => {
             </p>
           </div>
 
-          {currentQuestion === questions.length - 1 ? (
-            <Button
-              onClick={handleSubmit}
-              disabled={isSubmitting || selectedAnswers[currentQuestion] === undefined}
-              className="bg-white text-primary hover:bg-white/90 interactive-button h-12 px-6"
-            >
+          {currentQuestion === questions.length - 1 ? <Button onClick={handleSubmit} disabled={isSubmitting || selectedAnswers[currentQuestion] === undefined} className="bg-white text-primary hover:bg-white/90 interactive-button h-12 px-6">
               {isSubmitting ? "جاري الإرسال..." : "إرسال الاختبار"}
-            </Button>
-          ) : (
-            <Button
-              onClick={handleNext}
-              disabled={selectedAnswers[currentQuestion] === undefined}
-              className="bg-white text-primary hover:bg-white/90 interactive-button h-12 px-6"
-            >
+            </Button> : <Button onClick={handleNext} disabled={selectedAnswers[currentQuestion] === undefined} className="bg-white text-primary hover:bg-white/90 interactive-button h-12 px-6">
               التالي
               <ArrowLeft className="h-5 w-5 mr-2" />
-            </Button>
-          )}
+            </Button>}
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Quiz;
