@@ -5,13 +5,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Download, Search, Users, Trophy, Clock, TrendingUp, LogOut } from "lucide-react";
+import { Download, Search, Users, Trophy, Clock, TrendingUp, LogOut, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import * as XLSX from 'xlsx';
+
 interface AdminDashboardProps {
   isAuthenticated: boolean;
 }
+
 interface EmployeeResult {
   id: string;
   employee_name: string;
@@ -22,9 +24,8 @@ interface EmployeeResult {
   time_taken: number;
   created_at: string;
 }
-const AdminDashboard = ({
-  isAuthenticated
-}: AdminDashboardProps) => {
+
+const AdminDashboard = ({ isAuthenticated }: AdminDashboardProps) => {
   const [results, setResults] = useState<EmployeeResult[]>([]);
   const [filteredResults, setFilteredResults] = useState<EmployeeResult[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -40,6 +41,7 @@ const AdminDashboard = ({
   const {
     toast
   } = useToast();
+
   useEffect(() => {
     if (!isAuthenticated) {
       navigate("/admin");
@@ -47,14 +49,14 @@ const AdminDashboard = ({
     }
     fetchResults();
   }, [isAuthenticated, navigate]);
+
   const fetchResults = async () => {
     try {
-      const {
-        data,
-        error
-      } = await supabase.from('employee_results').select('*').order('created_at', {
-        ascending: false
-      });
+      const { data, error } = await supabase
+        .from('employee_results')
+        .select('*')
+        .order('created_at', { ascending: false });
+
       if (error) throw error;
 
       // Map the data to ensure time_taken exists (default to 0 if missing)
@@ -62,6 +64,7 @@ const AdminDashboard = ({
         ...item,
         time_taken: (item as any).time_taken || 0
       }));
+
       setResults(mappedData);
       setFilteredResults(mappedData);
       calculateStats(mappedData);
@@ -76,6 +79,39 @@ const AdminDashboard = ({
       setIsLoading(false);
     }
   };
+
+  const deleteResult = async (id: string, employeeName: string) => {
+    try {
+      const { error } = await supabase
+        .from('employee_results')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      // Remove from local state
+      const updatedResults = results.filter(result => result.id !== id);
+      setResults(updatedResults);
+      setFilteredResults(updatedResults.filter(result => 
+        result.employee_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        result.employee_id.toLowerCase().includes(searchTerm.toLowerCase())
+      ));
+      calculateStats(updatedResults);
+
+      toast({
+        title: "تم حذف النتيجة بنجاح",
+        description: `تم حذف نتيجة اختبار ${employeeName}`,
+      });
+    } catch (error) {
+      console.error('Error deleting result:', error);
+      toast({
+        title: "خطأ في حذف النتيجة",
+        description: "حدث خطأ أثناء حذف النتيجة",
+        variant: "destructive"
+      });
+    }
+  };
+
   const calculateStats = (data: EmployeeResult[]) => {
     const total = data.length;
     const passed = data.filter(r => r.passed).length;
@@ -90,6 +126,7 @@ const AdminDashboard = ({
       averageTime
     });
   };
+
   const handleSearch = (value: string) => {
     setSearchTerm(value);
     if (value.trim() === "") {
@@ -99,6 +136,7 @@ const AdminDashboard = ({
       setFilteredResults(filtered);
     }
   };
+
   const exportToExcel = () => {
     const exportData = filteredResults.map(result => ({
       'اسم الموظف': result.employee_name,
@@ -119,23 +157,27 @@ const AdminDashboard = ({
       description: "تم تصدير النتائج إلى ملف Excel"
     });
   };
+
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
+
   const handleLogout = () => {
     navigate("/admin");
   };
+
   if (!isAuthenticated) {
     return null;
   }
-  return <div className="min-h-screen brown-gradient p-4">
+
+  return (
+    <div className="min-h-screen brown-gradient p-4">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-4 space-x-reverse">
-            
             <div>
               <h1 className="text-3xl font-bold text-white drop-shadow-lg">
                 لوحة تحكم الإدارة
@@ -145,7 +187,11 @@ const AdminDashboard = ({
               </p>
             </div>
           </div>
-          <Button onClick={handleLogout} variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20">
+          <Button 
+            onClick={handleLogout} 
+            variant="outline" 
+            className="bg-white/10 text-white border-white/30 hover:bg-white/20"
+          >
             <LogOut className="h-4 w-4 ml-2" />
             تسجيل الخروج
           </Button>
@@ -217,9 +263,17 @@ const AdminDashboard = ({
               <div className="flex gap-2">
                 <div className="relative">
                   <Search className="absolute right-3 top-3 h-4 w-4 text-white/60" />
-                  <Input placeholder="بحث بالاسم أو الرقم الوظيفي" value={searchTerm} onChange={e => handleSearch(e.target.value)} className="bg-white/20 border-white/30 text-white placeholder:text-white/60 pr-10 w-64" />
+                  <Input
+                    placeholder="بحث بالاسم أو الرقم الوظيفي"
+                    value={searchTerm}
+                    onChange={(e) => handleSearch(e.target.value)}
+                    className="bg-white/20 border-white/30 text-white placeholder:text-white/60 pr-10 w-64"
+                  />
                 </div>
-                <Button onClick={exportToExcel} className="bg-white text-primary hover:bg-white/90 interactive-button">
+                <Button 
+                  onClick={exportToExcel}
+                  className="bg-white text-primary hover:bg-white/90 interactive-button"
+                >
                   <Download className="h-4 w-4 ml-2" />
                   تصدير Excel
                 </Button>
@@ -238,18 +292,25 @@ const AdminDashboard = ({
                     <TableHead className="text-white font-medium">النتيجة</TableHead>
                     <TableHead className="text-white font-medium">الوقت المستغرق</TableHead>
                     <TableHead className="text-white font-medium">تاريخ الاختبار</TableHead>
+                    <TableHead className="text-white font-medium">الإجراءات</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {isLoading ? <TableRow>
-                      <TableCell colSpan={7} className="text-center text-white/80 py-8">
+                  {isLoading ? (
+                    <TableRow>
+                      <TableCell colSpan={8} className="text-center text-white/80 py-8">
                         جاري التحميل...
                       </TableCell>
-                    </TableRow> : filteredResults.length === 0 ? <TableRow>
-                      <TableCell colSpan={7} className="text-center text-white/80 py-8">
+                    </TableRow>
+                  ) : filteredResults.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={8} className="text-center text-white/80 py-8">
                         لا توجد نتائج
                       </TableCell>
-                    </TableRow> : filteredResults.map(result => <TableRow key={result.id} className="border-white/10 hover:bg-white/5">
+                    </TableRow>
+                  ) : (
+                    filteredResults.map((result) => (
+                      <TableRow key={result.id} className="border-white/10 hover:bg-white/5">
                         <TableCell className="text-white font-medium">{result.employee_name}</TableCell>
                         <TableCell className="text-white">{result.employee_id}</TableCell>
                         <TableCell className="text-white">{result.score} / 15</TableCell>
@@ -266,13 +327,27 @@ const AdminDashboard = ({
                             <div className="text-white/70">{new Date(result.created_at).toLocaleTimeString('ar-SA')}</div>
                           </div>
                         </TableCell>
-                      </TableRow>)}
+                        <TableCell>
+                          <Button
+                            onClick={() => deleteResult(result.id, result.employee_name)}
+                            variant="destructive"
+                            size="sm"
+                            className="bg-red-600 hover:bg-red-700"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
                 </TableBody>
               </Table>
             </div>
           </CardContent>
         </Card>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default AdminDashboard;
