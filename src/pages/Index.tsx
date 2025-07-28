@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -9,17 +10,24 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
-  const [employeeName, setEmployeeName] = useState("");
   const [employeeId, setEmployeeId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  const handleEmployeeIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Only allow numbers and limit to 4 characters
+    if (/^\d{0,4}$/.test(value)) {
+      setEmployeeId(value);
+    }
+  };
+
   const handleStartQuiz = async () => {
-    if (!employeeName.trim() || !employeeId.trim()) {
+    if (!employeeId.trim() || employeeId.length !== 4) {
       toast({
         title: "بيانات مطلوبة",
-        description: "يرجى إدخال الاسم الثلاثي والرقم الوظيفي",
+        description: "يرجى إدخال الرقم الوظيفي مكون من 4 أرقام",
         variant: "destructive"
       });
       return;
@@ -51,7 +59,7 @@ const Index = () => {
       // Navigate to quiz with employee data
       navigate("/quiz", {
         state: {
-          employeeName: employeeName.trim(),
+          employeeName: `موظف ${employeeId}`,
           employeeId: employeeId.trim()
         }
       });
@@ -166,33 +174,28 @@ const Index = () => {
           <CardHeader className="text-center">
             <CardTitle className="text-[#8B6914] text-2xl">ابدأ الاختبار</CardTitle>
             <CardDescription className="text-[#8B6914]/80">
-              يرجى إدخال بياناتك لبدء الاختبار
+              يرجى إدخال رقمك الوظيفي لبدء الاختبار
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-3">
-              <Label htmlFor="name" className="text-[#8B6914] font-medium">الاسم الثلاثي</Label>
-              <Input 
-                id="name" 
-                value={employeeName} 
-                onChange={e => setEmployeeName(e.target.value)} 
-                placeholder="أدخل اسمك الثلاثي" 
-                className="border-[#8B6914]/30 focus:border-[#8B6914] focus:ring-[#8B6914] h-12 text-lg" 
-              />
-            </div>
-            <div className="space-y-3">
-              <Label htmlFor="employeeId" className="text-[#8B6914] font-medium">الرقم الوظيفي</Label>
+              <Label htmlFor="employeeId" className="text-[#8B6914] font-medium">الرقم الوظيفي (4 أرقام)</Label>
               <Input 
                 id="employeeId" 
                 value={employeeId} 
-                onChange={e => setEmployeeId(e.target.value)} 
+                onChange={handleEmployeeIdChange}
                 placeholder="أدخل رقمك الوظيفي" 
-                className="border-[#8B6914]/30 focus:border-[#8B6914] focus:ring-[#8B6914] h-12 text-lg" 
+                className="border-[#8B6914]/30 focus:border-[#8B6914] focus:ring-[#8B6914] h-12 text-lg text-center"
+                maxLength={4}
+                inputMode="numeric"
               />
+              <p className="text-sm text-[#8B6914]/60 text-center">
+                {employeeId.length}/4 أرقام
+              </p>
             </div>
             <Button 
               onClick={handleStartQuiz} 
-              disabled={isLoading} 
+              disabled={isLoading || employeeId.length !== 4} 
               className="w-full bg-[#8B6914] text-white hover:bg-[#8B6914]/90 interactive-button h-12 text-lg font-medium"
             >
               {isLoading ? "جاري التحقق..." : "بدء الاختبار"}
