@@ -8,12 +8,24 @@ import { questions } from "@/data/questions";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import Timer from "@/components/Timer";
+
+// Function to shuffle array
+const shuffleArray = <T,>(array: T[]): T[] => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+};
+
 const Quiz = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const {
     toast
   } = useToast();
+  const [shuffledQuestions] = useState(() => shuffleArray(questions));
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<number[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -39,7 +51,7 @@ const Quiz = () => {
     setSelectedAnswers(newAnswers);
   };
   const handleNext = () => {
-    if (currentQuestion < questions.length - 1) {
+    if (currentQuestion < shuffledQuestions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
     }
   };
@@ -58,7 +70,7 @@ const Quiz = () => {
       userAnswer: string;
       correctAnswer: string;
     }> = [];
-    questions.forEach((question, index) => {
+    shuffledQuestions.forEach((question, index) => {
       if (selectedAnswers[index] === question.correctAnswer) {
         correctAnswers++;
       } else {
@@ -71,13 +83,13 @@ const Quiz = () => {
     });
     return {
       score: correctAnswers,
-      percentage: correctAnswers / questions.length * 100,
+      percentage: correctAnswers / shuffledQuestions.length * 100,
       incorrectAnswers: wrongAnswers
     };
   };
   const handleSubmit = async () => {
     // تأكد من أن جميع الأسئلة تم الإجابة عليها
-    if (selectedAnswers.length !== questions.length || selectedAnswers.includes(undefined)) {
+    if (selectedAnswers.length !== shuffledQuestions.length || selectedAnswers.includes(undefined)) {
       toast({
         title: "يجب الإجابة على جميع الأسئلة",
         description: "يرجى الإجابة على جميع الأسئلة قبل الإرسال",
@@ -184,7 +196,7 @@ const Quiz = () => {
             </CardHeader>
             <CardContent className="space-y-6 text-center">
               <div className="bg-white/10 rounded-lg p-4 space-y-3">
-                <p className="text-white text-xl font-medium">النتيجة: {score} من {questions.length}</p>
+                <p className="text-white text-xl font-medium">النتيجة: {score} من {shuffledQuestions.length}</p>
                 <p className="text-white text-xl font-medium">النسبة المئوية: {percentage.toFixed(1)}%</p>
                 <p className="text-white text-lg">الوقت المستغرق: {timeMinutes}:{timeSeconds.toString().padStart(2, '0')}</p>
               </div>
@@ -222,8 +234,8 @@ const Quiz = () => {
         </div>
       </div>;
   }
-  const progress = (currentQuestion + 1) / questions.length * 100;
-  const question = questions[currentQuestion];
+  const progress = (currentQuestion + 1) / shuffledQuestions.length * 100;
+  const question = shuffledQuestions[currentQuestion];
   return <div className="min-h-screen brown-gradient p-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
@@ -246,7 +258,7 @@ const Quiz = () => {
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center space-x-4 space-x-reverse">
               <span className="text-white font-medium text-lg">
-                السؤال {currentQuestion + 1} من {questions.length}
+                السؤال {currentQuestion + 1} من {shuffledQuestions.length}
               </span>
               <span className="text-white/90 text-lg">
                 {Math.round(progress)}%
@@ -280,11 +292,11 @@ const Quiz = () => {
 
           <div className="text-center">
             <p className="text-white/80 text-sm">
-              {selectedAnswers.filter(a => a !== undefined).length} / {questions.length} تم الإجابة عليها
+              {selectedAnswers.filter(a => a !== undefined).length} / {shuffledQuestions.length} تم الإجابة عليها
             </p>
           </div>
 
-          {currentQuestion === questions.length - 1 ? <Button onClick={handleSubmit} disabled={isSubmitting || selectedAnswers[currentQuestion] === undefined} className="bg-white text-primary hover:bg-white/90 interactive-button h-12 px-6">
+          {currentQuestion === shuffledQuestions.length - 1 ? <Button onClick={handleSubmit} disabled={isSubmitting || selectedAnswers[currentQuestion] === undefined} className="bg-white text-primary hover:bg-white/90 interactive-button h-12 px-6">
               {isSubmitting ? "جاري الإرسال..." : "إرسال الاختبار"}
             </Button> : <Button onClick={handleNext} disabled={selectedAnswers[currentQuestion] === undefined} className="bg-white text-primary hover:bg-white/90 interactive-button h-12 px-6">
               التالي
