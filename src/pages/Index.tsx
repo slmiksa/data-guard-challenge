@@ -144,7 +144,9 @@ const Index = () => {
               </div>
             </CardHeader>
             <CardContent className="pt-0">
-              <p className="text-blue-700 text-center font-medium">الاختبار مقسم لثلاث مراحل (مبتدئ - متوسط - متقدم) مقسمة على ثلاث أسابيع
+              <p className="text-blue-700 text-center font-medium">الاختبار مقسم لثلاث مراحل (مبتدئ - متوسط - متقدم) مقسمة على ثلاث أسابيع,
+
+
 يبدأ الاختبار من يوم (الخميس - الأربعاء )</p>
             </CardContent>
           </Card>
