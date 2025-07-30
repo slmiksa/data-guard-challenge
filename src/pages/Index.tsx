@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -8,35 +7,34 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Shield, CheckCircle, AlertCircle, Users, Clock, Trophy, Target, Info, User } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-
 const Index = () => {
   const [employeeId, setEmployeeId] = useState("");
-  const [employeeData, setEmployeeData] = useState<{first_name: string, last_name: string} | null>(null);
+  const [employeeData, setEmployeeData] = useState<{
+    first_name: string;
+    last_name: string;
+  } | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const navigate = useNavigate();
-  const { toast } = useToast();
-
+  const {
+    toast
+  } = useToast();
   const searchEmployee = async (id: string) => {
     if (id.length !== 4) {
       setEmployeeData(null);
       return;
     }
-
     setIsSearching(true);
     try {
-      const { data, error } = await supabase
-        .from('employees')
-        .select('first_name, last_name')
-        .eq('employee_id', id)
-        .single();
-
+      const {
+        data,
+        error
+      } = await supabase.from('employees').select('first_name, last_name').eq('employee_id', id).single();
       if (error) {
         console.error('Error searching employee:', error);
         setEmployeeData(null);
         return;
       }
-
       setEmployeeData(data);
     } catch (error) {
       console.error('Error searching employee:', error);
@@ -45,7 +43,6 @@ const Index = () => {
       setIsSearching(false);
     }
   };
-
   const handleEmployeeIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     // Only allow numbers and limit to 4 characters
@@ -63,10 +60,8 @@ const Index = () => {
         setEmployeeData(null);
       }
     }, 300);
-
     return () => clearTimeout(timeoutId);
   }, [employeeId]);
-
   const handleStartQuiz = async () => {
     if (!employeeId.trim() || employeeId.length !== 4) {
       toast({
@@ -76,7 +71,6 @@ const Index = () => {
       });
       return;
     }
-
     if (!employeeData) {
       toast({
         title: "موظف غير موجود",
@@ -85,20 +79,16 @@ const Index = () => {
       });
       return;
     }
-
     setIsLoading(true);
     try {
       // Check if employee has already taken the test
-      const { data: existingResult, error } = await supabase
-        .from('employee_results')
-        .select('*')
-        .eq('employee_id', employeeId)
-        .single();
-
+      const {
+        data: existingResult,
+        error
+      } = await supabase.from('employee_results').select('*').eq('employee_id', employeeId).single();
       if (error && error.code !== 'PGRST116') {
         throw error;
       }
-
       if (existingResult) {
         // Handle time_taken safely - default to 0 if missing
         const timeTaken = (existingResult as any).time_taken || 0;
@@ -131,9 +121,7 @@ const Index = () => {
       setIsLoading(false);
     }
   };
-
-  return (
-    <div className="min-h-screen brown-gradient flex items-center justify-center p-4">
+  return <div className="min-h-screen brown-gradient flex items-center justify-center p-4">
       <div className="max-w-5xl w-full space-y-8">
         {/* Header */}
         <div className="text-center space-y-6">
@@ -167,9 +155,7 @@ const Index = () => {
             <CardContent className="py-4">
               <div className="flex items-center gap-2 justify-center">
                 <Target className="h-5 w-5 text-green-600" />
-                <p className="text-green-800 font-semibold text-lg">
-                  مستوى الاختبار الحالي: مبتدئ
-                </p>
+                <p className="text-green-800 font-semibold text-lg">مستوى الاختبار الحالي: متوسط</p>
               </div>
             </CardContent>
           </Card>
@@ -237,30 +223,18 @@ const Index = () => {
           <CardContent className="space-y-6">
             <div className="space-y-3">
               <Label htmlFor="employeeId" className="text-[#8B6914] font-medium">الرقم الوظيفي (4 أرقام)</Label>
-              <Input 
-                id="employeeId" 
-                value={employeeId} 
-                onChange={handleEmployeeIdChange}
-                placeholder="أدخل رقمك الوظيفي" 
-                className="border-[#8B6914]/30 focus:border-[#8B6914] focus:ring-[#8B6914] h-12 text-lg text-center"
-                maxLength={4}
-                inputMode="numeric"
-              />
+              <Input id="employeeId" value={employeeId} onChange={handleEmployeeIdChange} placeholder="أدخل رقمك الوظيفي" className="border-[#8B6914]/30 focus:border-[#8B6914] focus:ring-[#8B6914] h-12 text-lg text-center" maxLength={4} inputMode="numeric" />
               <p className="text-sm text-[#8B6914]/60 text-center">
                 {employeeId.length}/4 أرقام
               </p>
             </div>
 
             {/* Employee Welcome Message */}
-            {employeeId.length === 4 && (
-              <div className="space-y-3">
-                {isSearching ? (
-                  <div className="text-center py-4">
+            {employeeId.length === 4 && <div className="space-y-3">
+                {isSearching ? <div className="text-center py-4">
                     <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-[#8B6914]"></div>
                     <p className="text-[#8B6914]/70 mt-2">جاري البحث...</p>
-                  </div>
-                ) : employeeData ? (
-                  <Card className="bg-green-50/90 backdrop-blur-sm border-green-200/50">
+                  </div> : employeeData ? <Card className="bg-green-50/90 backdrop-blur-sm border-green-200/50">
                     <CardContent className="py-4">
                       <div className="flex items-center gap-2 justify-center">
                         <User className="h-5 w-5 text-green-600" />
@@ -269,9 +243,7 @@ const Index = () => {
                         </p>
                       </div>
                     </CardContent>
-                  </Card>
-                ) : (
-                  <Card className="bg-red-50/90 backdrop-blur-sm border-red-200/50">
+                  </Card> : <Card className="bg-red-50/90 backdrop-blur-sm border-red-200/50">
                     <CardContent className="py-4">
                       <div className="flex items-center gap-2 justify-center">
                         <AlertCircle className="h-5 w-5 text-red-600" />
@@ -280,16 +252,10 @@ const Index = () => {
                         </p>
                       </div>
                     </CardContent>
-                  </Card>
-                )}
-              </div>
-            )}
+                  </Card>}
+              </div>}
 
-            <Button 
-              onClick={handleStartQuiz} 
-              disabled={isLoading || employeeId.length !== 4 || !employeeData} 
-              className="w-full bg-[#8B6914] text-white hover:bg-[#8B6914]/90 interactive-button h-12 text-lg font-medium"
-            >
+            <Button onClick={handleStartQuiz} disabled={isLoading || employeeId.length !== 4 || !employeeData} className="w-full bg-[#8B6914] text-white hover:bg-[#8B6914]/90 interactive-button h-12 text-lg font-medium">
               {isLoading ? "جاري التحقق..." : "بدء الاختبار"}
             </Button>
           </CardContent>
@@ -300,8 +266,6 @@ const Index = () => {
           
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
