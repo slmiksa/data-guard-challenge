@@ -19,13 +19,34 @@ const shuffleArray = <T,>(array: T[]): T[] => {
   return shuffled;
 };
 
+// Function to shuffle question options and track correct answer
+const shuffleQuestionOptions = (question: any) => {
+  const optionsWithIndex = question.options.map((option: string, index: number) => ({
+    option,
+    isCorrect: index === question.correctAnswer
+  }));
+  
+  const shuffledOptions = shuffleArray(optionsWithIndex);
+  const newCorrectAnswer = shuffledOptions.findIndex((item: {option: string, isCorrect: boolean}) => item.isCorrect);
+  
+  return {
+    ...question,
+    options: shuffledOptions.map((item: {option: string, isCorrect: boolean}) => item.option),
+    correctAnswer: newCorrectAnswer
+  };
+};
+
 const Quiz = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const {
     toast
   } = useToast();
-  const [shuffledQuestions] = useState(() => shuffleArray(questions));
+  const [shuffledQuestions] = useState(() => {
+    // Get 15 random questions and shuffle their options
+    const randomQuestions = shuffleArray(questions).slice(0, 15);
+    return randomQuestions.map(question => shuffleQuestionOptions(question));
+  });
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<number[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
