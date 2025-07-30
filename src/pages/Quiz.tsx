@@ -285,7 +285,7 @@ const Quiz = () => {
                 {Math.round(progress)}%
               </span>
             </div>
-            <Timer isActive={isTimerActive} onTimeUpdate={handleTimeUpdate} className="bg-white/20 rounded-lg px-4 py-2" />
+            <Timer isActive={isTimerActive} onTimeUpdate={handleTimeUpdate} className="flex-shrink-0" />
           </div>
           <Progress value={progress} className="h-3" />
         </div>
