@@ -152,7 +152,7 @@ const Index = () => {
           </Card>
 
           {/* Current Test Level */}
-          <Card className="bg-green-50/90 backdrop-blur-sm border-green-200/50 max-w-md mx-auto">
+          <Card className="bg-green-50/90 backdrop-blur-sm border-green-200/50 max-w-md mx-auto animate-pulse-brown">
             <CardContent className="py-4">
               <div className="flex items-center gap-2 justify-center">
                 <Target className="h-5 w-5 text-green-600" />
