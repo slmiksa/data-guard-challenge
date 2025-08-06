@@ -156,7 +156,7 @@ const Index = () => {
             <CardContent className="py-4">
               <div className="flex items-center gap-2 justify-center">
                 <Target className="h-5 w-5 text-green-600" />
-                <p className="text-green-800 font-semibold text-lg">مستوى الاختبار الحالي: متوسط</p>
+                <p className="text-green-800 font-semibold text-lg">مستوى الاختبار الحالي: متقدم</p>
               </div>
             </CardContent>
           </Card>
