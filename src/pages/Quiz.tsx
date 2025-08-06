@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { CheckCircle, XCircle, ArrowRight, ArrowLeft } from "lucide-react";
+import { CheckCircle, XCircle, ArrowRight, ArrowLeft, Check, X } from "lucide-react";
 import { questions } from "@/data/questions";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -39,13 +39,27 @@ const shuffleQuestionOptions = (question: any) => {
 const Quiz = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
+  
   const [shuffledQuestions] = useState(() => {
-    // Get 15 random questions and shuffle their options
-    const randomQuestions = shuffleArray(questions).slice(0, 15);
-    return randomQuestions.map(question => shuffleQuestionOptions(question));
+    // Separate true/false and multiple choice questions
+    const trueFalseQuestions = questions.filter(q => q.options.length === 2);
+    const multipleChoiceQuestions = questions.filter(q => q.options.length > 2);
+    
+    // Get random questions: mix of both types
+    const selectedTrueFalse = shuffleArray(trueFalseQuestions).slice(0, 8); // 8 true/false
+    const selectedMultipleChoice = shuffleArray(multipleChoiceQuestions).slice(0, 7); // 7 multiple choice
+    
+    // Combine and shuffle all selected questions
+    const allSelectedQuestions = shuffleArray([...selectedTrueFalse, ...selectedMultipleChoice]);
+    
+    // Only shuffle options for multiple choice questions
+    return allSelectedQuestions.map(question => {
+      if (question.options.length === 2) {
+        return question; // Don't shuffle true/false options
+      }
+      return shuffleQuestionOptions(question);
+    });
   });
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<number[]>([]);
@@ -298,9 +312,61 @@ const Quiz = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {question.options.map((option, index) => <Button key={index} variant={selectedAnswers[currentQuestion] === index ? "default" : "outline"} className={`w-full text-right p-6 h-auto text-lg font-medium transition-all duration-300 ${selectedAnswers[currentQuestion] === index ? "bg-white text-primary shadow-lg transform scale-105" : "bg-white/10 text-white border-white/30 hover:bg-white/20 hover:scale-102"}`} onClick={() => handleAnswerSelect(index)}>
-                <span className="text-right w-full">{option}</span>
-              </Button>)}
+            {question.options.length === 2 ? (
+              // True/False Questions - Special Design
+              <div className="grid grid-cols-2 gap-6">
+                {question.options.map((option, index) => {
+                  const isSelected = selectedAnswers[currentQuestion] === index;
+                  const isTrue = option === "صح";
+                  
+                  return (
+                    <Button
+                      key={index}
+                      variant="outline"
+                      className={`
+                        relative p-8 h-32 text-xl font-bold transition-all duration-300 border-2
+                        ${isSelected 
+                          ? (isTrue 
+                            ? "bg-green-500 text-white border-green-400 shadow-2xl transform scale-105" 
+                            : "bg-red-500 text-white border-red-400 shadow-2xl transform scale-105"
+                          ) 
+                          : "bg-white/10 text-white border-white/30 hover:bg-white/20 hover:scale-102"
+                        }
+                        ${isTrue ? "hover:border-green-300" : "hover:border-red-300"}
+                      `}
+                      onClick={() => handleAnswerSelect(index)}
+                    >
+                      <div className="flex flex-col items-center space-y-3">
+                        {isTrue ? (
+                          <Check className={`h-12 w-12 ${isSelected ? "text-white" : "text-green-400"}`} />
+                        ) : (
+                          <X className={`h-12 w-12 ${isSelected ? "text-white" : "text-red-400"}`} />
+                        )}
+                        <span className="text-2xl font-bold">{option}</span>
+                      </div>
+                    </Button>
+                  );
+                })}
+              </div>
+            ) : (
+              // Multiple Choice Questions - Original Design
+              question.options.map((option, index) => (
+                <Button 
+                  key={index} 
+                  variant={selectedAnswers[currentQuestion] === index ? "default" : "outline"} 
+                  className={`
+                    w-full text-right p-6 h-auto text-lg font-medium transition-all duration-300 
+                    ${selectedAnswers[currentQuestion] === index 
+                      ? "bg-white text-primary shadow-lg transform scale-105" 
+                      : "bg-white/10 text-white border-white/30 hover:bg-white/20 hover:scale-102"
+                    }
+                  `} 
+                  onClick={() => handleAnswerSelect(index)}
+                >
+                  <span className="text-right w-full">{option}</span>
+                </Button>
+              ))
+            )}
           </CardContent>
         </Card>
 
