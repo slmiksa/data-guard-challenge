@@ -5,10 +5,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Download, Search, Users, Trophy, Clock, TrendingUp, LogOut, Trash2 } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Download, Search, Users, Trophy, Clock, TrendingUp, LogOut, Trash2, BarChart3 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import * as XLSX from 'xlsx';
+import TestAnalytics from "@/components/TestAnalytics";
 
 interface AdminDashboardProps {
   isAuthenticated: boolean;
@@ -252,16 +254,35 @@ const AdminDashboard = ({ isAuthenticated }: AdminDashboardProps) => {
           </Card>
         </div>
 
-        {/* Search and Export */}
-        <Card className="bg-white/15 backdrop-blur-sm border-white/20">
-          <CardHeader>
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-              <div>
-                <CardTitle className="text-white text-xl">نتائج الاختبارات</CardTitle>
-                <CardDescription className="text-white/80">
-                  عرض وإدارة جميع نتائج اختبارات الوعي الأمني
-                </CardDescription>
-              </div>
+        {/* Main Content Tabs */}
+        <Tabs defaultValue="results" className="space-y-6">
+          <TabsList className="bg-white/20 border-white/30">
+            <TabsTrigger 
+              value="results" 
+              className="data-[state=active]:bg-white data-[state=active]:text-primary text-white"
+            >
+              <Table className="h-4 w-4 ml-2" />
+              نتائج الاختبارات
+            </TabsTrigger>
+            <TabsTrigger 
+              value="analytics" 
+              className="data-[state=active]:bg-white data-[state=active]:text-primary text-white"
+            >
+              <BarChart3 className="h-4 w-4 ml-2" />
+              التحليلات المتقدمة
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="results">
+            <Card className="bg-white/15 backdrop-blur-sm border-white/20">
+              <CardHeader>
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                  <div>
+                    <CardTitle className="text-white text-xl">نتائج الاختبارات</CardTitle>
+                    <CardDescription className="text-white/80">
+                      عرض وإدارة جميع نتائج اختبارات الوعي الأمني
+                    </CardDescription>
+                  </div>
               <div className="flex gap-2">
                 <div className="relative">
                   <Search className="absolute right-3 top-3 h-4 w-4 text-white/60" />
@@ -345,8 +366,14 @@ const AdminDashboard = ({ isAuthenticated }: AdminDashboardProps) => {
                 </TableBody>
               </Table>
             </div>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="analytics">
+            <TestAnalytics />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
