@@ -34,6 +34,7 @@ const TestAnalytics = () => {
   const [stats, setStats] = useState({
     allTestsPassed: 0,
     partialTests: 0,
+    completedNotPassed: 0,
     totalEmployees: 0,
     averagePerformance: 0
   });
@@ -99,12 +100,15 @@ const TestAnalytics = () => {
         ? `${employee.first_name} ${employee.last_name}`
         : tests[0]?.employee_name || employeeId;
 
-      // Group tests by unique combinations of score, percentage, and date
-      const uniqueTests = tests.filter((test, index, self) => {
+      // Sort tests by creation date and remove true duplicates only
+      const sortedTests = tests.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+      
+      // Only remove exact duplicates (same score, percentage, date, and time)
+      const uniqueTests = sortedTests.filter((test, index, self) => {
         return index === self.findIndex(t => 
           t.score === test.score && 
           t.percentage === test.percentage && 
-          new Date(t.created_at).toDateString() === new Date(test.created_at).toDateString()
+          t.created_at === test.created_at
         );
       });
 
@@ -145,8 +149,15 @@ const TestAnalytics = () => {
     });
 
     return processedData.sort((a, b) => {
+      // First priority: those who passed all 3 tests
       if (a.all_passed && a.total_tests >= 3 && (!b.all_passed || b.total_tests < 3)) return -1;
       if (b.all_passed && b.total_tests >= 3 && (!a.all_passed || a.total_tests < 3)) return 1;
+      
+      // Second priority: those who took 3 tests (regardless of passing)
+      if (a.total_tests >= 3 && b.total_tests < 3) return -1;
+      if (b.total_tests >= 3 && a.total_tests < 3) return 1;
+      
+      // Third priority: by average score
       return b.average_score - a.average_score;
     });
   };
@@ -154,6 +165,7 @@ const TestAnalytics = () => {
   const calculateAnalyticsStats = (data: EmployeeTestData[]) => {
     const allTestsPassed = data.filter(emp => emp.all_passed && emp.total_tests >= 3).length;
     const partialTests = data.filter(emp => emp.total_tests > 0 && emp.total_tests < 3).length;
+    const completedNotPassed = data.filter(emp => emp.total_tests >= 3 && !emp.all_passed).length;
     const totalEmployees = data.length;
     const employeesWithTests = data.filter(emp => emp.total_tests > 0);
     const averagePerformance = employeesWithTests.length > 0 
@@ -163,6 +175,7 @@ const TestAnalytics = () => {
     setStats({
       allTestsPassed,
       partialTests,
+      completedNotPassed,
       totalEmployees,
       averagePerformance
     });
@@ -191,6 +204,10 @@ const TestAnalytics = () => {
     return analyticsData.filter(emp => emp.total_tests > 0 && emp.total_tests < 3);
   };
 
+  const getCompletedNotPassed = () => {
+    return analyticsData.filter(emp => emp.total_tests >= 3 && !emp.all_passed);
+  };
+
   const getNotTested = () => {
     return analyticsData.filter(emp => emp.total_tests === 0);
   };
@@ -208,7 +225,7 @@ const TestAnalytics = () => {
   return (
     <div className="space-y-6">
       {/* Analytics Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         <Card className="bg-white/15 backdrop-blur-sm border-white/20 interactive-card">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-white">نجحوا في جميع الاختبارات</CardTitle>
@@ -216,6 +233,16 @@ const TestAnalytics = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-300">{stats.allTestsPassed}</div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-white/15 backdrop-blur-sm border-white/20 interactive-card">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-white">أكملوا ولم ينجحوا في الكل</CardTitle>
+            <AlertTriangle className="h-4 w-4 text-orange-300" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-orange-300">{stats.completedNotPassed}</div>
           </CardContent>
         </Card>
 
@@ -294,6 +321,53 @@ const TestAnalytics = () => {
                       <TableCell className="text-white">{employee.employee_id}</TableCell>
                       <TableCell className="text-white font-bold text-green-300">{employee.average_score.toFixed(1)}%</TableCell>
                       <TableCell className="text-white">{employee.total_tests}</TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Completed but not all passed */}
+      <Card className="bg-white/15 backdrop-blur-sm border-white/20">
+        <CardHeader>
+          <CardTitle className="text-white text-xl flex items-center gap-2">
+            <AlertTriangle className="h-5 w-5 text-orange-300" />
+            الموظفون الذين أكملوا 3 اختبارات ولم ينجحوا في الكل
+          </CardTitle>
+          <CardDescription className="text-white/80">
+            الموظفون الذين اختبروا جميع الاختبارات الثلاثة ولكن لم ينجحوا في بعضها
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="rounded-lg bg-white/5 overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-white/20">
+                  <TableHead className="text-white font-medium">اسم الموظف</TableHead>
+                  <TableHead className="text-white font-medium">الرقم الوظيفي</TableHead>
+                  <TableHead className="text-white font-medium">عدد الاختبارات</TableHead>
+                  <TableHead className="text-white font-medium">متوسط الدرجات</TableHead>
+                  <TableHead className="text-white font-medium">الحالة</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {getCompletedNotPassed().length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center text-white/80 py-8">
+                      جميع الذين أكملوا الاختبارات نجحوا في الكل
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  getCompletedNotPassed().map((employee) => (
+                    <TableRow key={employee.employee_id} className="border-white/10 hover:bg-white/5">
+                      <TableCell className="text-white font-medium">{employee.employee_name}</TableCell>
+                      <TableCell className="text-white">{employee.employee_id}</TableCell>
+                      <TableCell className="text-white">{employee.total_tests}</TableCell>
+                      <TableCell className="text-white">{employee.average_score.toFixed(1)}%</TableCell>
+                      <TableCell>{getStatusBadge(employee)}</TableCell>
                     </TableRow>
                   ))
                 )}
