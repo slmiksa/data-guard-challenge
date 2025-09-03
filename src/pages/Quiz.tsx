@@ -214,6 +214,33 @@ const Quiz = () => {
   if (!employeeData) {
     return null;
   }
+
+  // Check if there are no questions available
+  if (shuffledQuestions.length === 0) {
+    return (
+      <div className="min-h-screen brown-gradient flex items-center justify-center p-4">
+        <Card className="bg-white/15 backdrop-blur-sm border-white/20 interactive-card max-w-md w-full">
+          <CardHeader className="text-center">
+            <CardTitle className="text-white text-2xl font-bold">
+              لا توجد أسئلة متاحة
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="text-center space-y-4">
+            <p className="text-white/90 text-lg">
+              لم يتم العثور على أسئلة للاختبار. يرجى المحاولة لاحقاً.
+            </p>
+            <Button 
+              onClick={() => navigate("/")} 
+              className="bg-white text-primary hover:bg-white/90"
+            >
+              العودة للصفحة الرئيسية
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   if (showResult) {
     const passed = percentage >= 70;
     const timeMinutes = Math.floor(timeTaken / 60);
