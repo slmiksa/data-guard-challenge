@@ -135,29 +135,12 @@ const Index = () => {
           
           {/* Test Phases Note */}
           <Card className="bg-blue-50/90 backdrop-blur-sm border-blue-200/50 max-w-2xl mx-auto">
-            <CardHeader className="pb-3">
-              <div className="flex items-center gap-2 justify-center">
-                <Info className="h-5 w-5 text-blue-600" />
-                <CardTitle className="text-blue-800 text-lg">ملاحظة هامة</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <p className="text-blue-700 text-center font-medium">الاختبار مقسم لثلاث مراحل (مبتدئ - متوسط - متقدم) مقسمة على ثلاث أسابيع,
-
-
-يبدأ الاختبار من يوم (الخميس - الأربعاء )</p>
-            </CardContent>
+            
+            
           </Card>
 
           {/* Current Test Level */}
-          <Card className="bg-green-50/90 backdrop-blur-sm border-green-200/50 max-w-md mx-auto animate-pulse-brown">
-            <CardContent className="py-4">
-              <div className="flex items-center gap-2 justify-center">
-                <Target className="h-5 w-5 text-green-600" />
-                <p className="text-green-800 font-semibold text-lg">مستوى الاختبار الحالي: متقدم</p>
-              </div>
-            </CardContent>
-          </Card>
+          
         </div>
 
         {/* Features */}
