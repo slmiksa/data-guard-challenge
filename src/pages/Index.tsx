@@ -148,7 +148,7 @@ const Index = () => {
           <Card className="bg-white/90 backdrop-blur-sm border-[#8B6914]/30 interactive-card">
             <CardHeader className="text-center">
               <Trophy className="h-12 w-12 text-[#8B6914] mx-auto mb-2" />
-              <CardTitle className="text-[#8B6914] text-lg">15 سؤال</CardTitle>
+              <CardTitle className="text-[#8B6914] text-lg">اسئلة</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-[#8B6914]/80 text-center text-sm">
