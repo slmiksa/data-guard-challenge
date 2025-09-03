@@ -3,11 +3,13 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { CheckCircle, XCircle, ArrowRight, ArrowLeft, Check, X } from "lucide-react";
+import { CheckCircle, XCircle, ArrowRight, ArrowLeft, Check, X, Download } from "lucide-react";
 import { questions } from "@/data/questions";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import Timer from "@/components/Timer";
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 // Function to shuffle array
 const shuffleArray = <T,>(array: T[]): T[] => {
@@ -42,11 +44,8 @@ const Quiz = () => {
   const { toast } = useToast();
   
   const [shuffledQuestions] = useState(() => {
-    // Use all questions instead of limiting them
-    const allQuestions = shuffleArray([...questions]);
-    
-    // Only shuffle options for multiple choice questions
-    return allQuestions.map(question => {
+    // Use all questions in order instead of shuffling them
+    return questions.map(question => {
       if (question.options.length === 2) {
         return question; // Don't shuffle true/false options
       }
@@ -113,6 +112,69 @@ const Quiz = () => {
       percentage: correctAnswers / shuffledQuestions.length * 100,
       incorrectAnswers: wrongAnswers
     };
+  };
+
+  const downloadResultsPDF = async () => {
+    try {
+      const pdf = new jsPDF();
+      
+      // Add font support for Arabic (you might need to add a proper Arabic font file)
+      pdf.setFontSize(16);
+      
+      // Header
+      pdf.text("نتائج اختبار الوعي الأمني", 105, 20, { align: 'center' });
+      
+      // Employee info
+      pdf.setFontSize(12);
+      pdf.text(`اسم الموظف: ${employeeData.employeeName}`, 20, 40);
+      pdf.text(`رقم الموظف: ${employeeData.employeeId}`, 20, 50);
+      
+      // Results
+      const timeMinutes = Math.floor(timeTaken / 60);
+      const timeSeconds = timeTaken % 60;
+      pdf.text(`النتيجة: ${score} من ${shuffledQuestions.length}`, 20, 70);
+      pdf.text(`النسبة المئوية: ${percentage.toFixed(1)}%`, 20, 80);
+      pdf.text(`الوقت المستغرق: ${timeMinutes}:${timeSeconds.toString().padStart(2, '0')}`, 20, 90);
+      pdf.text(`النتيجة: ${percentage >= 70 ? 'نجح' : 'لم ينجح'}`, 20, 100);
+      
+      // Date
+      const currentDate = new Date().toLocaleDateString('ar-SA');
+      pdf.text(`تاريخ الاختبار: ${currentDate}`, 20, 110);
+      
+      // Incorrect answers if any
+      if (incorrectAnswers.length > 0) {
+        pdf.text("الإجابات الخاطئة:", 20, 130);
+        let yPosition = 140;
+        
+        incorrectAnswers.forEach((item, index) => {
+          if (yPosition > 250) {
+            pdf.addPage();
+            yPosition = 20;
+          }
+          
+          pdf.setFontSize(10);
+          pdf.text(`${index + 1}. ${item.question.substring(0, 80)}...`, 20, yPosition);
+          pdf.text(`إجابتك: ${item.userAnswer}`, 25, yPosition + 10);
+          pdf.text(`الإجابة الصحيحة: ${item.correctAnswer}`, 25, yPosition + 20);
+          yPosition += 35;
+        });
+      }
+      
+      // Save the PDF
+      pdf.save(`نتيجة_الاختبار_${employeeData.employeeId}.pdf`);
+      
+      toast({
+        title: "تم تحميل النتيجة بنجاح",
+        description: "تم حفظ ملف PDF للنتيجة",
+      });
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      toast({
+        title: "خطأ في تحميل PDF",
+        description: "حدث خطأ أثناء إنشاء ملف PDF",
+        variant: "destructive"
+      });
+    }
   };
   const handleSubmit = async () => {
     // تأكد من أن جميع الأسئلة تم الإجابة عليها
@@ -258,6 +320,21 @@ const Quiz = () => {
                 <p className="text-white/90 text-lg">
                   {passed ? "تهانينا! لقد أجبت بشكل صحيح على معظم الأسئلة وأظهرت وعياً جيداً بأمن المعلومات" : "يرجى مراجعة مواد أمن المعلومات وحماية البيانات والمحاولة مرة أخرى في المستقبل"}
                 </p>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button 
+                  onClick={downloadResultsPDF}
+                  className="bg-green-600 text-white hover:bg-green-700 px-6 py-2"
+                >
+                  <Download className="h-5 w-5 ml-2" />
+                  تحميل النتيجة PDF
+                </Button>
+                <Button 
+                  onClick={() => navigate("/")} 
+                  className="bg-white text-primary hover:bg-white/90 px-6 py-2"
+                >
+                  العودة للصفحة الرئيسية
+                </Button>
               </div>
             </CardContent>
           </Card>
