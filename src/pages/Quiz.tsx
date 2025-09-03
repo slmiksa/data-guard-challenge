@@ -42,19 +42,11 @@ const Quiz = () => {
   const { toast } = useToast();
   
   const [shuffledQuestions] = useState(() => {
-    // Separate true/false and multiple choice questions
-    const trueFalseQuestions = questions.filter(q => q.options.length === 2);
-    const multipleChoiceQuestions = questions.filter(q => q.options.length > 2);
-    
-    // Get random questions: mix of both types
-    const selectedTrueFalse = shuffleArray(trueFalseQuestions).slice(0, 8); // 8 true/false
-    const selectedMultipleChoice = shuffleArray(multipleChoiceQuestions).slice(0, 7); // 7 multiple choice
-    
-    // Combine and shuffle all selected questions
-    const allSelectedQuestions = shuffleArray([...selectedTrueFalse, ...selectedMultipleChoice]);
+    // Use all questions instead of limiting them
+    const allQuestions = shuffleArray([...questions]);
     
     // Only shuffle options for multiple choice questions
-    return allSelectedQuestions.map(question => {
+    return allQuestions.map(question => {
       if (question.options.length === 2) {
         return question; // Don't shuffle true/false options
       }
