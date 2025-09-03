@@ -128,9 +128,7 @@ const Index = () => {
           <div className="flex justify-center">
             
           </div>
-          <h1 className="text-5xl font-bold text-white drop-shadow-lg">
-            اختبار الوعي الأمني
-          </h1>
+          <h1 className="text-5xl font-bold text-white drop-shadow-lg mx-0">📝 اختبار توعوي للموظفين</h1>
           <p className="text-xl text-white/90 max-w-2xl mx-auto">
             برنامج توعوي متقدم لموظفي شركة الوصل الوطنية لتحصيل ديون جهات التمويل
           </p>
