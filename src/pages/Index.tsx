@@ -151,9 +151,7 @@ const Index = () => {
               <CardTitle className="text-[#8B6914] text-lg">اسئلة</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-[#8B6914]/80 text-center text-sm">
-                تقييم شامل لقياس مستوى الوعي الأمني
-              </p>
+              <p className="text-[#8B6914]/80 text-center text-sm">تقييم شامل لقياس مستوى الوعي </p>
             </CardContent>
           </Card>
 
