@@ -65,8 +65,6 @@ const Quiz = () => {
     userAnswer: string;
     correctAnswer: string;
   }>>([]);
-  const [showAnswerFeedback, setShowAnswerFeedback] = useState(false);
-  const [selectedAnswerIndex, setSelectedAnswerIndex] = useState<number | null>(null);
   const employeeData = location.state;
   useEffect(() => {
     if (!employeeData) {
@@ -74,40 +72,18 @@ const Quiz = () => {
     }
   }, [employeeData, navigate]);
   const handleAnswerSelect = (answerIndex: number) => {
-    if (showAnswerFeedback) return; // Prevent selecting another answer while showing feedback
-    
     const newAnswers = [...selectedAnswers];
     newAnswers[currentQuestion] = answerIndex;
     setSelectedAnswers(newAnswers);
-    setSelectedAnswerIndex(answerIndex);
-    
-    // Check if answer is incorrect
-    const currentQ = shuffledQuestions[currentQuestion];
-    if (answerIndex !== currentQ.correctAnswer) {
-      setShowAnswerFeedback(true);
-      // Auto-hide feedback after 3 seconds
-      setTimeout(() => {
-        setShowAnswerFeedback(false);
-        setSelectedAnswerIndex(null);
-      }, 3000);
-    }
   };
 
   const handleNext = () => {
-    if (showAnswerFeedback) {
-      setShowAnswerFeedback(false);
-      setSelectedAnswerIndex(null);
-    }
     if (currentQuestion < shuffledQuestions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
     }
   };
 
   const handlePrevious = () => {
-    if (showAnswerFeedback) {
-      setShowAnswerFeedback(false);
-      setSelectedAnswerIndex(null);
-    }
     if (currentQuestion > 0) {
       setCurrentQuestion(currentQuestion - 1);
     }
@@ -586,30 +562,6 @@ const Quiz = () => {
             )}
           </CardContent>
         </Card>
-
-        {/* Answer Feedback */}
-        {showAnswerFeedback && (
-          <Card className="bg-red-500/20 backdrop-blur-sm border-red-400/50 mb-8 animate-pulse">
-            <CardContent className="p-6 text-center space-y-4">
-              <div className="flex items-center justify-center space-x-2 space-x-reverse">
-                <XCircle className="h-8 w-8 text-red-400" />
-                <h3 className="text-white text-xl font-bold">إجابة خاطئة</h3>
-              </div>
-              <div className="bg-green-500/20 rounded-lg p-4 border border-green-400/50">
-                <div className="flex items-center justify-center space-x-2 space-x-reverse mb-2">
-                  <CheckCircle className="h-6 w-6 text-green-400" />
-                  <span className="text-white font-medium">الإجابة الصحيحة:</span>
-                </div>
-                <p className="text-white text-lg font-medium">
-                  {question.options[question.correctAnswer]}
-                </p>
-              </div>
-              <p className="text-white/80 text-sm">
-                سيتم الانتقال للسؤال التالي تلقائياً خلال ثوانٍ...
-              </p>
-            </CardContent>
-          </Card>
-        )}
 
         {/* Navigation */}
         <div className="flex justify-between items-center">
