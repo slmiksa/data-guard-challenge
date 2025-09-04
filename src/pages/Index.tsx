@@ -129,9 +129,7 @@ const Index = () => {
             
           </div>
           <h1 className="text-5xl font-bold text-white drop-shadow-lg mx-0">📝 اختبار توعوي للموظفين</h1>
-          <p className="text-xl text-white/90 max-w-2xl mx-auto">
-            الوعي بأنظمة ولوائح البنك المركزي السعودي (SAMA) الخاصة بالتمويل والتحصيل
-          </p>
+          <p className="text-xl text-white/90 max-w-2xl mx-auto">الوعي بأنظمة ولوائح البنك المركزي السعودي (SAMA) الخاصة بجهات بالتمويل والتحصيل</p>
           
           {/* Test Phases Note */}
           <Card className="bg-blue-50/90 backdrop-blur-sm border-blue-200/50 max-w-2xl mx-auto">
