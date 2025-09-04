@@ -27,22 +27,26 @@ const shuffleQuestionOptions = (question: any) => {
     option,
     isCorrect: index === question.correctAnswer
   }));
-  
   const shuffledOptions = shuffleArray(optionsWithIndex);
-  const newCorrectAnswer = shuffledOptions.findIndex((item: {option: string, isCorrect: boolean}) => item.isCorrect);
-  
+  const newCorrectAnswer = shuffledOptions.findIndex((item: {
+    option: string;
+    isCorrect: boolean;
+  }) => item.isCorrect);
   return {
     ...question,
-    options: shuffledOptions.map((item: {option: string, isCorrect: boolean}) => item.option),
+    options: shuffledOptions.map((item: {
+      option: string;
+      isCorrect: boolean;
+    }) => item.option),
     correctAnswer: newCorrectAnswer
   };
 };
-
 const Quiz = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { toast } = useToast();
-  
+  const {
+    toast
+  } = useToast();
   const [shuffledQuestions] = useState(() => {
     // Use all questions in order instead of shuffling them
     return questions.map(question => {
@@ -76,13 +80,11 @@ const Quiz = () => {
     newAnswers[currentQuestion] = answerIndex;
     setSelectedAnswers(newAnswers);
   };
-
   const handleNext = () => {
     if (currentQuestion < shuffledQuestions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
     }
   };
-
   const handlePrevious = () => {
     if (currentQuestion > 0) {
       setCurrentQuestion(currentQuestion - 1);
@@ -115,154 +117,112 @@ const Quiz = () => {
       incorrectAnswers: wrongAnswers
     };
   };
-
   const downloadResultsWord = async () => {
     try {
       const timeMinutes = Math.floor(timeTaken / 60);
       const timeSeconds = timeTaken % 60;
       const currentDate = new Date().toLocaleDateString('ar-SA');
-      
+
       // Create document paragraphs
-      const children = [
-        new Paragraph({
-          children: [
-            new TextRun({
-              text: "نتائج اختبار الجودة",
-              bold: true,
-              size: 28,
-            }),
-          ],
-          heading: HeadingLevel.HEADING_1,
-          alignment: "center",
-        }),
-        new Paragraph({
-          children: [
-            new TextRun({
-              text: `اسم الموظف: ${employeeData.employeeName}`,
-              size: 24,
-            }),
-          ],
-        }),
-        new Paragraph({
-          children: [
-            new TextRun({
-              text: `رقم الموظف: ${employeeData.employeeId}`,
-              size: 24,
-            }),
-          ],
-        }),
-        new Paragraph({
-          children: [
-            new TextRun({
-              text: `النتيجة: ${score} من ${shuffledQuestions.length}`,
-              size: 24,
-            }),
-          ],
-        }),
-        new Paragraph({
-          children: [
-            new TextRun({
-              text: `النسبة المئوية: ${percentage.toFixed(1)}%`,
-              size: 24,
-            }),
-          ],
-        }),
-        new Paragraph({
-          children: [
-            new TextRun({
-              text: `الوقت المستغرق: ${timeMinutes}:${timeSeconds.toString().padStart(2, '0')}`,
-              size: 24,
-            }),
-          ],
-        }),
-        new Paragraph({
-          children: [
-            new TextRun({
-              text: `النتيجة النهائية: ${percentage >= 70 ? 'نجح' : 'لم ينجح'}`,
-              size: 24,
-              bold: true,
-              color: percentage >= 70 ? "00FF00" : "FF0000",
-            }),
-          ],
-        }),
-        new Paragraph({
-          children: [
-            new TextRun({
-              text: `تاريخ الاختبار: ${currentDate}`,
-              size: 24,
-            }),
-          ],
-        }),
-      ];
+      const children = [new Paragraph({
+        children: [new TextRun({
+          text: "نتائج اختبار الجودة",
+          bold: true,
+          size: 28
+        })],
+        heading: HeadingLevel.HEADING_1,
+        alignment: "center"
+      }), new Paragraph({
+        children: [new TextRun({
+          text: `اسم الموظف: ${employeeData.employeeName}`,
+          size: 24
+        })]
+      }), new Paragraph({
+        children: [new TextRun({
+          text: `رقم الموظف: ${employeeData.employeeId}`,
+          size: 24
+        })]
+      }), new Paragraph({
+        children: [new TextRun({
+          text: `النتيجة: ${score} من ${shuffledQuestions.length}`,
+          size: 24
+        })]
+      }), new Paragraph({
+        children: [new TextRun({
+          text: `النسبة المئوية: ${percentage.toFixed(1)}%`,
+          size: 24
+        })]
+      }), new Paragraph({
+        children: [new TextRun({
+          text: `الوقت المستغرق: ${timeMinutes}:${timeSeconds.toString().padStart(2, '0')}`,
+          size: 24
+        })]
+      }), new Paragraph({
+        children: [new TextRun({
+          text: `النتيجة النهائية: ${percentage >= 70 ? 'نجح' : 'لم ينجح'}`,
+          size: 24,
+          bold: true,
+          color: percentage >= 70 ? "00FF00" : "FF0000"
+        })]
+      }), new Paragraph({
+        children: [new TextRun({
+          text: `تاريخ الاختبار: ${currentDate}`,
+          size: 24
+        })]
+      })];
 
       // Add incorrect answers if any
       if (incorrectAnswers.length > 0) {
-        children.push(
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: "الإجابات الخاطئة:",
-                bold: true,
-                size: 26,
-              }),
-            ],
-            heading: HeadingLevel.HEADING_2,
-          })
-        );
-
+        children.push(new Paragraph({
+          children: [new TextRun({
+            text: "الإجابات الخاطئة:",
+            bold: true,
+            size: 26
+          })],
+          heading: HeadingLevel.HEADING_2
+        }));
         incorrectAnswers.forEach((item, index) => {
-          children.push(
-            new Paragraph({
-              children: [
-                new TextRun({
-                  text: `${index + 1}. السؤال: ${item.question}`,
-                  size: 22,
-                  bold: true,
-                }),
-              ],
-            }),
-            new Paragraph({
-              children: [
-                new TextRun({
-                  text: `إجابتك: ${item.userAnswer}`,
-                  size: 20,
-                  color: "FF0000",
-                }),
-              ],
-            }),
-            new Paragraph({
-              children: [
-                new TextRun({
-                  text: `الإجابة الصحيحة: ${item.correctAnswer}`,
-                  size: 20,
-                  color: "00FF00",
-                }),
-              ],
-            }),
-            new Paragraph({
-              children: [new TextRun({ text: "", size: 20 })],
-            })
-          );
+          children.push(new Paragraph({
+            children: [new TextRun({
+              text: `${index + 1}. السؤال: ${item.question}`,
+              size: 22,
+              bold: true
+            })]
+          }), new Paragraph({
+            children: [new TextRun({
+              text: `إجابتك: ${item.userAnswer}`,
+              size: 20,
+              color: "FF0000"
+            })]
+          }), new Paragraph({
+            children: [new TextRun({
+              text: `الإجابة الصحيحة: ${item.correctAnswer}`,
+              size: 20,
+              color: "00FF00"
+            })]
+          }), new Paragraph({
+            children: [new TextRun({
+              text: "",
+              size: 20
+            })]
+          }));
         });
       }
 
       // Create the document
       const doc = new Document({
-        sections: [
-          {
-            properties: {},
-            children: children,
-          },
-        ],
+        sections: [{
+          properties: {},
+          children: children
+        }]
       });
 
       // Generate and save the document
       const blob = await Packer.toBlob(doc);
       saveAs(blob, `نتيجة_الاختبار_${employeeData.employeeId}.docx`);
-      
       toast({
         title: "تم تحميل النتيجة بنجاح",
-        description: "تم حفظ ملف Word للنتيجة",
+        description: "تم حفظ ملف Word للنتيجة"
       });
     } catch (error) {
       console.error('Error generating Word document:', error);
@@ -368,8 +328,7 @@ const Quiz = () => {
 
   // Check if there are no questions available
   if (shuffledQuestions.length === 0) {
-    return (
-      <div className="min-h-screen brown-gradient flex items-center justify-center p-4">
+    return <div className="min-h-screen brown-gradient flex items-center justify-center p-4">
         <Card className="bg-white/15 backdrop-blur-sm border-white/20 interactive-card max-w-md w-full">
           <CardHeader className="text-center">
             <CardTitle className="text-white text-2xl font-bold">
@@ -380,18 +339,13 @@ const Quiz = () => {
             <p className="text-white/90 text-lg">
               لم يتم العثور على أسئلة للاختبار. يرجى المحاولة لاحقاً.
             </p>
-            <Button 
-              onClick={() => navigate("/")} 
-              className="bg-white text-primary hover:bg-white/90"
-            >
+            <Button onClick={() => navigate("/")} className="bg-white text-primary hover:bg-white/90">
               العودة للصفحة الرئيسية
             </Button>
           </CardContent>
         </Card>
-      </div>
-    );
+      </div>;
   }
-
   if (showResult) {
     const passed = percentage >= 70;
     const timeMinutes = Math.floor(timeTaken / 60);
@@ -414,22 +368,14 @@ const Quiz = () => {
                 <p className="text-white text-lg">الوقت المستغرق: {timeMinutes}:{timeSeconds.toString().padStart(2, '0')}</p>
               </div>
               <div className="space-y-2">
-                <p className="text-white/90 text-lg">
-                  {passed ? "تهانينا! لقد أجبت بشكل صحيح على معظم الأسئلة وأظهرت وعياً جيداً بأمن المعلومات" : "يرجى مراجعة مواد أمن المعلومات وحماية البيانات والمحاولة مرة أخرى في المستقبل"}
-                </p>
+                
               </div>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button 
-                  onClick={downloadResultsWord}
-                  className="bg-green-600 text-white hover:bg-green-700 px-6 py-2"
-                >
+                <Button onClick={downloadResultsWord} className="bg-green-600 text-white hover:bg-green-700 px-6 py-2">
                   <Download className="h-5 w-5 ml-2" />
                   تحميل النتيجة Word
                 </Button>
-                <Button 
-                  onClick={() => navigate("/")} 
-                  className="bg-white text-primary hover:bg-white/90 px-6 py-2"
-                >
+                <Button onClick={() => navigate("/")} className="bg-white text-primary hover:bg-white/90 px-6 py-2">
                   العودة للصفحة الرئيسية
                 </Button>
               </div>
@@ -505,61 +451,31 @@ const Quiz = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {question.options.length === 2 ? (
-              // True/False Questions - Special Design
-              <div className="grid grid-cols-2 gap-6">
+            {question.options.length === 2 ?
+          // True/False Questions - Special Design
+          <div className="grid grid-cols-2 gap-6">
                 {question.options.map((option, index) => {
-                  const isSelected = selectedAnswers[currentQuestion] === index;
-                  const isTrue = option === "صح";
-                  
-                  return (
-                    <Button
-                      key={index}
-                      variant="outline"
-                      className={`
+              const isSelected = selectedAnswers[currentQuestion] === index;
+              const isTrue = option === "صح";
+              return <Button key={index} variant="outline" className={`
                         relative p-8 h-32 text-xl font-bold transition-all duration-300 border-2
-                        ${isSelected 
-                          ? (isTrue 
-                            ? "bg-green-500 text-white border-green-400 shadow-2xl transform scale-105" 
-                            : "bg-red-500 text-white border-red-400 shadow-2xl transform scale-105"
-                          ) 
-                          : "bg-white/10 text-white border-white/30 hover:bg-white/20 hover:scale-102"
-                        }
+                        ${isSelected ? isTrue ? "bg-green-500 text-white border-green-400 shadow-2xl transform scale-105" : "bg-red-500 text-white border-red-400 shadow-2xl transform scale-105" : "bg-white/10 text-white border-white/30 hover:bg-white/20 hover:scale-102"}
                         ${isTrue ? "hover:border-green-300" : "hover:border-red-300"}
-                      `}
-                      onClick={() => handleAnswerSelect(index)}
-                    >
+                      `} onClick={() => handleAnswerSelect(index)}>
                       <div className="flex flex-col items-center space-y-3">
-                        {isTrue ? (
-                          <Check className={`h-12 w-12 ${isSelected ? "text-white" : "text-green-400"}`} />
-                        ) : (
-                          <X className={`h-12 w-12 ${isSelected ? "text-white" : "text-red-400"}`} />
-                        )}
+                        {isTrue ? <Check className={`h-12 w-12 ${isSelected ? "text-white" : "text-green-400"}`} /> : <X className={`h-12 w-12 ${isSelected ? "text-white" : "text-red-400"}`} />}
                         <span className="text-2xl font-bold">{option}</span>
                       </div>
-                    </Button>
-                  );
-                })}
-              </div>
-            ) : (
-              // Multiple Choice Questions - Original Design
-              question.options.map((option, index) => (
-                <Button 
-                  key={index} 
-                  variant={selectedAnswers[currentQuestion] === index ? "default" : "outline"} 
-                  className={`
+                    </Button>;
+            })}
+              </div> :
+          // Multiple Choice Questions - Original Design
+          question.options.map((option, index) => <Button key={index} variant={selectedAnswers[currentQuestion] === index ? "default" : "outline"} className={`
                     w-full text-right p-6 h-auto text-lg font-medium transition-all duration-300 
-                    ${selectedAnswers[currentQuestion] === index 
-                      ? "bg-white text-primary shadow-lg transform scale-105" 
-                      : "bg-white/10 text-white border-white/30 hover:bg-white/20 hover:scale-102"
-                    }
-                  `} 
-                  onClick={() => handleAnswerSelect(index)}
-                >
+                    ${selectedAnswers[currentQuestion] === index ? "bg-white text-primary shadow-lg transform scale-105" : "bg-white/10 text-white border-white/30 hover:bg-white/20 hover:scale-102"}
+                  `} onClick={() => handleAnswerSelect(index)}>
                   <span className="text-right w-full">{option}</span>
-                </Button>
-              ))
-            )}
+                </Button>)}
           </CardContent>
         </Card>
 
