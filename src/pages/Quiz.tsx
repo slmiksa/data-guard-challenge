@@ -419,9 +419,7 @@ const Quiz = () => {
               <img src="/lovable-uploads/dfff4da4-873f-4b05-9e34-0a05daeb9091.png" alt="شعار الوصل" className="h-16 w-16 object-contain logo-image" />
             </div>
           </div>
-          <h1 className="text-4xl font-bold text-white mb-2 drop-shadow-lg">
-            اختبار الوعي الأمني
-          </h1>
+          <h1 className="text-4xl font-bold text-white mb-2 drop-shadow-lg">اختبار توعوي للموظفين</h1>
           <p className="text-white/90 text-lg">
             {employeeData.employeeName} - {employeeData.employeeId}
           </p>
