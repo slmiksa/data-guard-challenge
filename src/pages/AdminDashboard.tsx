@@ -132,7 +132,7 @@ const AdminDashboard = ({
     const exportData = filteredResults.map(result => ({
       'اسم الموظف': result.employee_name,
       'الرقم الوظيفي': result.employee_id,
-      'الدرجة': result.score,
+      'الدرجة': `${result.score}/10`,
       'النسبة المئوية': `${result.percentage.toFixed(1)}%`,
       'النتيجة': result.passed ? 'نجح' : 'لم ينجح',
       'الوقت المستغرق': `${Math.floor(result.time_taken / 60)}:${(result.time_taken % 60).toString().padStart(2, '0')}`,
@@ -289,7 +289,7 @@ const AdminDashboard = ({
                     </TableRow> : filteredResults.map(result => <TableRow key={result.id} className="border-white/10 hover:bg-white/5">
                         <TableCell className="text-white font-medium">{result.employee_name}</TableCell>
                         <TableCell className="text-white">{result.employee_id}</TableCell>
-                        <TableCell className="text-white">{result.score} / 15</TableCell>
+                        <TableCell className="text-white">{result.score} / 10</TableCell>
                         <TableCell className="text-white font-medium">{result.percentage.toFixed(1)}%</TableCell>
                         <TableCell>
                           <Badge variant={result.passed ? "default" : "destructive"}>
