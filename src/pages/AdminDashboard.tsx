@@ -168,9 +168,7 @@ const AdminDashboard = ({
               <h1 className="text-3xl font-bold text-white drop-shadow-lg">
                 لوحة تحكم الإدارة
               </h1>
-              <p className="text-white/90">
-                إدارة نتائج اختبار الوعي الأمني
-              </p>
+              <p className="text-white/90">إدارة نتائج الاختبار التوعوي</p>
             </div>
           </div>
           <Button onClick={handleLogout} variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20">
