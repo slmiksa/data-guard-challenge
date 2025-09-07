@@ -48,13 +48,8 @@ const Quiz = () => {
     toast
   } = useToast();
   const [shuffledQuestions] = useState(() => {
-    // Use all questions in order instead of shuffling them
-    return questions.map(question => {
-      if (question.options.length === 2) {
-        return question; // Don't shuffle true/false options
-      }
-      return shuffleQuestionOptions(question);
-    });
+    // Keep all questions and options in their original order
+    return questions;
   });
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<number[]>([]);
